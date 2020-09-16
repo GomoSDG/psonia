@@ -1,10 +1,7 @@
 (ns psonia.config
-  (:require [cprop.core :refer [load-config]]
-            [cprop.source :as source]))
+  (:require [cprop.source :as source]
+            [mount.core :refer [defstate]]))
 
-(def config (load-config
-             :merge
-             [(source/from-env)]))
-
-
-
+(defstate config :start (merge
+                         (source/from-env)
+                         (source/from-file "config.edn")))
