@@ -1,4 +1,4 @@
-(ns psonia.users.core
+(ns psonia.core
   (:require [reitit.ring :as ring]
             [org.httpkit.server :as server]))
 
