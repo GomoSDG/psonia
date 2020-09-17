@@ -3,5 +3,5 @@
             [mount.core :refer [defstate]]))
 
 (defstate config :start (merge
-                         (source/from-env)
+                         (:psonia (source/from-env))
                          (source/from-file "config.edn")))
