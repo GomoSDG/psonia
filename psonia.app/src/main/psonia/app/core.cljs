@@ -19,10 +19,10 @@
     :products (clojure.set/index (gen/sample (s/gen ::products/spec)) [:id])}))
 
 (defn render-active-panel []
-  (let [active-panel @(re-frame/subscribe [:active-panel])]
-    (rdom/render
-     [site-layout active-panel]
-     (.getElementById js/document "app"))))
+  (re-frame/dispatch-sync [:initialize-db])
+  (rdom/render
+   [site-layout]
+   (.getElementById js/document "app")))
 
 (defn init []
   (re-frame/dispatch-sync [:initialize-db])

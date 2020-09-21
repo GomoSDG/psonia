@@ -49,9 +49,9 @@
 (defn- rating [val]
   [:div.star-rating
    (for [star (range (- val 1))]
-     [:i.sr-star.czi-star-filled.active])
-   (for [no-start (range (- 6 val))]
-     [:i.sr-star.czi-star])])
+     ^{:key star} [:i.sr-star.czi-star-filled.active])
+   (for [no-star (range (- 6 val))]
+     ^{:key no-star} [:i.sr-star.czi-star])])
 
 (defn- product-details [{:keys [name price original-price avg-rating]}]
   [:div.card-body.py-2
@@ -79,9 +79,46 @@
      [product-details product]
      [actions product]]))
 
+(defn toolbox []
+  [:div.d-flex.justify-content-center.justify-content-sm-between.align-items-center.pt-2.pb-4.pb-sm-5
+    [:div.d-flex.flex-wrap
+     [:div.form-inline.flex-nowrap.mr-3.mr-sm-4.pb-3
+      [:label.text-light.opacity-75.text-nowrap.mr-2.d-none.d-sm-block
+       {:for "sorting"}
+       "Sort by:"]
+      [:select#sorting.form-control.custom-select
+       [:option "Popularity"]
+       [:option "Low - Hight Price"]
+       [:option "High - Low Price"]
+       [:option "Average Rating"]
+       [:option "A - Z Order"]
+       [:option "Z - A Order"]]
+      [:span.font-size-sm.text-light.opacity-75.text-nowrap.ml-2.d-none.d-md-block
+       "of 287 products"]]]
+    [:div.d-flex.pb-3
+     [:a.nav-link-style.nav-link-light.mr-3
+      {:href "#"}
+      [:i.czi-arrow-left]]
+     [:span.font-size-md.text-light "1 / 5"]
+     [:a.nav-link-style.nav-link-light.ml-3
+      {:href "#"}
+      [:i.czi-arrow-right]]]
+    [:div.d-none.d-sm-flex.pb-3
+     [:a.btn.btn-icon.nav-link-style.bg-light.text-dark.disabled.opacity-100.mr-2
+      {:href "#"}
+      [:i.czi-view-grid]]
+     [:a.btn.btn-icon.nav-link-style.nav-link-light
+      {:href "shop-list-ls.html"}
+      [:i.czi-view-list]]]])
+
 (defn product-grid [products]
-  [:div.row.pt-2.mx-n2
+  [:div.row.pt-3.mx-n2
    (for [prod products]
-     [:div.col-lg-3.col-md-4.col-sm-6.px-2.mb-4
-      [product prod]])])
+     ^{:key prod}[:div.col-lg-3.col-md-4.col-sm-6.px-2.mb-4
+                  [product prod]])])
+
+(defn product-grid-with-toolbox [products]
+  [:section.col-lg-8
+   [toolbox]
+   [product-grid products]])
 

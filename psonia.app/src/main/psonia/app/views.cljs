@@ -1,8 +1,9 @@
 (ns psonia.app.views
   (:require [psonia.app.panels.home :as home]
+            [psonia.app.panels.catalog.core :as catalog]
             [re-frame.core :as re-frame]))
 
-(def panels {:home #'home/home})
+(def panels {:home #'catalog/panel})
 
 (re-frame/reg-event-db
  :set-active-panel
