@@ -5,6 +5,30 @@
 (def icons {:add "czi-add-circle"
             :home "czi-home"})
 
+(defn nav-item [body]
+  [:li.nav-item
+   body])
+
+(defn navbar-nav []
+  [:ul.navbar-nav
+   [:li.nav-item "Home"]])
+
+(defn brand [body]
+  [:a.navbar-brand.d-none.d-sm-block.mr-4.order-lg-1 {:style {:min-width "7rem"}
+                                                      :href "index.html"}
+   body])
+
+(defn navbar []
+  [:div.navbar.navbar-expand-lg.navbar-light
+   [:div.container
+    ;; Brand
+    [brand "Super Street Market"]
+    [:div#navbarCollapse.collapse.navbar-collapse.mr-auto.order-lg-2
+     [:hr.my-3]
+     [navbar-nav]]]])
+
+
+
 (defn sidebar [& el]
   [:div#shop-sidebar.cz-sidebar.rounded-lg.box-shadow-lg
    [:div.cz-sidebar-header.box-shadow-sm
