@@ -14,18 +14,18 @@
    [:li.nav-item "Home"]])
 
 (defn brand [body]
-  [:a.navbar-brand.d-none.d-sm-block.mr-4.order-lg-1 {:style {:min-width "7rem"}
-                                                      :href "index.html"}
-   body])
+  [:<>
+   [:a.navbar-brand.d-none.d-sm-block.mr-3.flex-shrink-0 {:style {:min-width "7rem"}
+                                                          :href "index.html"}
+    body]
+   [:a.navbar-brand.d-sm-none.mr-2.order-lg-1 {:style {:min-width "4.625rem"}
+                                               :href "index.html"}
+    body]])
 
 (defn navbar []
-  [:div.navbar.navbar-expand-lg.navbar-light
-   [:div.container
-    ;; Brand
-    [brand "Super Street Market"]
-    [:div#navbarCollapse.collapse.navbar-collapse.mr-auto.order-lg-2
-     [:hr.my-3]
-     [navbar-nav]]]])
+   [:div#navbarCollapse.collapse.navbar-collapse
+    [:hr.my-3]
+    [navbar-nav]])
 
 
 
@@ -62,6 +62,6 @@
         title  (panels/page-title @panel)
         set-tile (set! (.-title js/document) (str title " - Super Street"))]
     (fn []
-      [@panel])))
+      [@panel navbar])))
 
 
