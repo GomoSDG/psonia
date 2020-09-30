@@ -35,13 +35,14 @@
         {:style "background-color: #f3dcff;"}]]]]])
 
 (defn- actions [product]
-  [:div.d-flex.mb-2
-   [:select.custom-select.custom-select-sm.mr-2
-    [:option "XS"]
-    [:option "S"]
-    [:option "M"]
-    [:option "L"]
-    [:option "XL"]]
+  [:div.card-body.card-body-hidden
+   [:div.text-center.pb-2
+    [:select.custom-select.custom-select-sm.mr-2
+     [:option "XS"]
+     [:option "S"]
+     [:option "M"]
+     [:option "L"]
+     [:option "XL"]]]
    [:button.btn.btn-primary.btn-sm
     {:type "button"}
     [:i.czi-cart.font-size-sm.mr-1] "Add to Cart"]])
@@ -77,7 +78,8 @@
       {:href "#"}
       [:img {:alt "Product", :src "https://via.placeholder.com/500"}]]
      [product-details product]
-     [actions product]]))
+     [actions product]
+     [:hr.d-sm-none]]))
 
 (defn toolbox []
   [:div.d-flex.justify-content-center.justify-content-sm-between.align-items-center.pt-2.pb-4.pb-sm-5
