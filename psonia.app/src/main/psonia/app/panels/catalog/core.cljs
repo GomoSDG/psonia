@@ -24,7 +24,7 @@
        [:div.input-group-append-overlay
         [:span.input-group-text [:i.czi-search]]]]]]
 
-    [:div.navbar.navbar-expand-lg.navbar-light.bg-light
+    [:div.navbar.navbar-expand-lg.navbar-light.navbar-stuck-menu.mt-n2.pt0.pb-2
      [:div.container
       [main]]]]])
 
