@@ -16,7 +16,7 @@
  (fn [_ _]
    {:active-panel :home
     :panels views/panels
-    :products (clojure.set/index (gen/sample (s/gen ::products/spec)) [:id])}))
+    :products (clojure.set/index (gen/sample (s/gen ::products/spec) 30) [:id])}))
 
 (defn render-active-panel []
   (re-frame/dispatch-sync [:initialize-db])

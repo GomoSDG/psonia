@@ -1,4 +1,6 @@
-(ns psonia.app.panels.catalog.components)
+(ns psonia.app.panels.catalog.components
+  (:require [goog.string :as gstring]
+            [goog.string.format]))
 
 ;; Define feature types and customize
 
@@ -61,13 +63,14 @@
     name]
    [:h3.product-title.font-size-sm
     [:a {:href "#"} name]]
+   (if avg-rating
+     [rating avg-rating])
    [:div.d-flex.justify-content-between
     [:div.product-price
-     [:span.text-accent "R" (.toLocaleString price "en-ZA")]
+     [:span.text-accent
+      "R" (gstring/format "%.2f" price)]
      (when original-price
-       [:del.font-size-sm.text-muted "R" original-price])]
-    (if avg-rating
-      [rating avg-rating])]])
+       [:del.font-size-sm.text-muted "R" (gstring/format "%.2f" original-price)])]]])
 
 (defn product [product]
   (let [{:keys [id on-promotion image-b64]} product]

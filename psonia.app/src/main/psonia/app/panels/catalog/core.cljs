@@ -7,9 +7,6 @@
 
 (def breadcrumb [{:name "Home"
                   :url  "#"
-                  :icon :add}
-                 {:name "Products"
-                  :url  "#"
                   :icon :home}])
 
 (defn multi-level-navbar [main]

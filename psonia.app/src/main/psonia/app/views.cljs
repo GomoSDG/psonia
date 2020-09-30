@@ -1,9 +1,11 @@
 (ns psonia.app.views
   (:require [psonia.app.panels.home :as home]
             [psonia.app.panels.catalog.core :as catalog]
+            [psonia.app.panels.admin.vendors.core :as vendors]
             [re-frame.core :as re-frame]))
 
-(def panels {:home #'catalog/panel})
+(def panels {:home          #'catalog/panel
+             :admin/vendors #'vendors/list-all})
 
 (re-frame/reg-event-db
  :set-active-panel

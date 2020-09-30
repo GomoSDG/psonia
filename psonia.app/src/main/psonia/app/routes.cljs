@@ -10,6 +10,9 @@
 (defroute home "/" []
   (re-frame/dispatch [:set-active-panel :home]))
 
+(defroute admin-users "/admin/vendors" []
+  (re-frame/dispatch [:set-active-panel :admin/vendors]))
+
 (defn hook-browser-navigation! []
   (doto (History.)
     (events/listen
