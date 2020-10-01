@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "release": "gulp sass && npx shadow-cljs release app",
+    "release": "shadow-cljs release app",
     "watch": "shadow-cljs watch app"
   },
   "devDependencies": {
