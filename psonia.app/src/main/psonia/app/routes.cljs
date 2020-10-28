@@ -14,7 +14,11 @@
              ["admin/"
               ["vendors"
                {:name :admin.vendors
-                :view #'vendors/list-all}]]])
+                :view #'vendors/list-all}]
+              ["vendors/"
+               [":id/view"
+                {:name :admin.vendors.view
+                 :view #'vendors/vendor-view}]]]])
 
 (defn router-component [{:keys [router]}]
   (let [current-route @(re-frame/subscribe [:routes/current-route])]
