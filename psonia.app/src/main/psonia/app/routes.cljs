@@ -28,16 +28,14 @@
    {:data {:coercion rss/coercion}}))
 
 (defn on-navigate [new-match]
-  (js/console.log "Navigating: " new-match)
   (when new-match
     (re-frame/dispatch [:routes/navigated new-match])))
 
 (defn init-routes! []
-  (js/console.log "initializing routes")
   (rfe/start!
    router
    on-navigate
-   {:use-fragment false}))
+   {:use-fragment true}))
 
 ;; Events
 
@@ -47,7 +45,6 @@
 
 (re-frame/reg-event-db :routes/navigated
                        (fn [db [_ new-match]]
-                         (js/console.log "Navigated!")
                          (let [old-match   (:current-route db)
                                controllers (rfc/apply-controllers (:controllers old-match) new-match)]
                            (assoc db :current-route (assoc new-match :controllers controllers)))))
