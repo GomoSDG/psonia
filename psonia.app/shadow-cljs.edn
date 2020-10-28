@@ -16,8 +16,7 @@
  {:app {:target     :browser
         :output-dir "resources/public/js"
         :asset-path "/js"
-        :modules    {:main {:entries [psonia.app.core]
-                            :init-fn psonia.app.core/init}}
+        :modules    {:main {:entries [psonia.app.core]}}
 
 
         :devtools {:repl-init-ns cljs.user
@@ -29,5 +28,4 @@
   :prod {:target           :browser
          :output-dir       "resources/public/js"
          :asset-path       "/js"
-         :modules          {:main {:entries [psonia.app.core]}}
-         :compiler-options {:optimizations :simple}}}}
+         :modules          {:main {:entries [psonia.app.core]}}}}}
