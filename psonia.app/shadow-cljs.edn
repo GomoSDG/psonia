@@ -24,4 +24,5 @@
                    :preloads     []
                    :http-port    8021
                    :http-root    "resources/public"
+                   :after-load   psonia.app.core/render-active-panel
                    :autoreload   true}}}}

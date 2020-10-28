@@ -10,11 +10,11 @@
 (def routes ["/"
              ["products"
               {:name :routes/products
-               :view catalog/panel}]
+               :view #'catalog/panel}]
              ["admin/"
               ["vendors"
                {:name :admin.vendors
-                :view vendors/list-all}]]])
+                :view #'vendors/list-all}]]])
 
 (defn router-component [{:keys [router]}]
   (let [current-route @(re-frame/subscribe [:routes/current-route])]
@@ -35,7 +35,7 @@
   (rfe/start!
    router
    on-navigate
-   {:use-fragment true}))
+   {:use-fragment false}))
 
 ;; Events
 
