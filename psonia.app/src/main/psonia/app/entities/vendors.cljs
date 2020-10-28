@@ -1,7 +1,7 @@
 (ns psonia.app.entities.vendors
   (:require [cljs.spec.alpha :as s]))
 
-(s/def ::spec (s/keys :req-un [::name ::email ::id-number ::fica ::address ::tax-number]))
+(s/def ::spec (s/keys :req-un [::name ::email ::id-number ::fica ::address ::tax-number ::active ::created-on]))
 
 (s/def ::address (s/keys :req-un [::line-one ::line-two ::line-three]))
 
@@ -19,3 +19,5 @@
 (s/def ::proof-of-bank string?)
 (s/def ::id (s/and int? pos?))
 (s/def ::tax-number string?)
+(s/def ::active boolean?)
+(s/def ::created-on string?)

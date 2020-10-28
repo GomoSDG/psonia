@@ -31,6 +31,31 @@
      [:a.btn.btn-icon.nav-link-style.nav-link-light
       {:href "shop-list-ls.html"}
       [:i.czi-view-list]]]])
+
+(defn vendor-list-item [item]
+  (let [{name       :name
+         active     :active
+         created-on :created-on} item]
+
+    [:tr
+     [:td.py-3.align-middle
+      [:div.media.align-items-center
+       [:img.mr-2 {:src "https://via.placeholder.com/20"}]
+       [:div.media-body
+        name]]]
+     [:td.py-3.align-middle
+      active]
+     [:td.py-3.align-middle
+      created-on]]))
+
 (defn vendor-list [vendors]
   (fn []
-    [:]))
+    [:table.table.table-hover.mb-0
+     [:thead
+      [:tr
+       [:th "Name"]
+       [:th "Active"]
+       [:th "Created On"]]]
+     [:tbody
+      (for [i vendors]
+        ^{:key (:id i)} [vendor-list-item i])]]))

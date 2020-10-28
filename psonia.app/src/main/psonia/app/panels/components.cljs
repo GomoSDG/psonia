@@ -17,6 +17,8 @@
      [:div.container
       ]]]])
 
+;; Sidebar
+
 (defn sidebar-items [items]
   (js/console.log items)
   [:ul.list-unstyled.mb-0
