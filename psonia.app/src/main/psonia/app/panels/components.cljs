@@ -17,8 +17,9 @@
      [:div.container
       ]]]])
 
+;; Sidebar
+
 (defn sidebar-items [items]
-  (js/console.log items)
   [:ul.list-unstyled.mb-0
    (for [i items]
      (do (js/console.log i)
@@ -26,7 +27,6 @@
                 name   :name
                 href   :href
                 active :active} i]
-           (js/console.log "Name is: " name)
            [:li.border-bottom.mb-0
             [:a.nav-link-style.d-flex.align-items-center.px-4.py-3
              {:class (when active ["active"])
@@ -36,7 +36,6 @@
              name]])))])
 
 (defn sidebar-section [{:keys [name items]}]
-  (js/console.log items)
   [:<>
    [:div.bg-secondary.p-4
     [:h3.font-size-sm.mb-0.text-muted

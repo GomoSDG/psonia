@@ -16,12 +16,17 @@
  {:app {:target     :browser
         :output-dir "resources/public/js"
         :asset-path "/js"
-        :modules    {:main {:entries [psonia.app.core]
-                            :init-fn psonia.app.core/init}}
+        :modules    {:main {:entries [psonia.app.core]}}
 
 
         :devtools {:repl-init-ns cljs.user
                    :preloads     []
                    :http-port    8021
                    :http-root    "resources/public"
-                   :autoreload   true}}}}
+                   :after-load   psonia.app.core/render-active-panel
+                   :autoreload   true}}
+  :prod {:target           :browser
+         :output-dir       "resources/public/js"
+         :asset-path       "/js"
+         :modules          {:main {:entries [psonia.app.core]
+                                   :init-fn psonia.app.core/init}}}}}

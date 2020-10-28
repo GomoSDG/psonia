@@ -17,9 +17,11 @@
  (fn [_ _]
    {:active-panel :home
     :panels views/panels
-    :products (clojure.set/index (gen/sample (s/gen ::products/spec) 5) [:id])}))
+    :products (clojure.set/index (gen/sample (s/gen ::products/spec) 5) [:id])
+    :vendors (clojure.set/index (gen/sample (s/gen ::vendors/spec) 5) [:id])}))
 
 (defn render-active-panel []
+  (re-frame/clear-subscription-cache!)
   (rdom/render [router-component {:router routes/router}]
             (.getElementById js/document "app")))
 
