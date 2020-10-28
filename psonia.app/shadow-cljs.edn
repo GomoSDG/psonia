@@ -26,8 +26,8 @@
                    :http-root    "resources/public"
                    :after-load   psonia.app.core/render-active-panel
                    :autoreload   true}}
-  :prod {:target     :browser
-         :output-dir "resources/public/js"
-         :asset-path "/js"
-         :modules    {:main {:entries [psonia.app.core]
-                             :init-fn psonia.app.core/init}}}}}
+  :prod {:target           :browser
+         :output-dir       "resources/public/js"
+         :asset-path       "/js"
+         :modules          {:main {:entries [psonia.app.core]}}
+         :compiler-options {:optimizations :simple}}}}
