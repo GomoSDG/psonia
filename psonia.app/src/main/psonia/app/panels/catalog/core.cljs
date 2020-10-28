@@ -3,34 +3,18 @@
             [psonia.app.layouts.site :as site]
             [re-frame.core :as re-frame]
             [reagent.ratom :as ratom]
-            [psonia.app.panels.categories.components :refer [categories-widget]]))
+            [psonia.app.panels.categories.components :refer [categories-widget]]
+            [psonia.app.panels.components :refer [multi-level-navbar]]))
 
 (def breadcrumb [{:name "Home"
                   :url  "#"
                   :icon :home}])
 
-(defn multi-level-navbar [main]
-  [:header.box-shadow-sm
-   [:div.navbar-sticky.bg-light
-    [:div.navbar.navbar-expand-lg.navbar-light
-     [:div.container
-      [site/brand "Super Street Market"]
-      [:div.input-group-overlay.d-none.d-lg-flex.mx-4
-       [:input.form-control.appended-form-control
-        {:placeholder "Search for products", :type "text"}]
-       [:div.input-group-append-overlay
-        [:span.input-group-text [:i.czi-search]]]]]]
-
-    [:div.navbar.navbar-expand-lg.navbar-light.navbar-stuck-menu.mt-n2.pt0.pb-2
-     [:div.container
-      [main]]]]])
-
 (defn panel [navbar]
   (let [products (re-frame/subscribe [:products])]
     (fn []
       [:<>
-       [multi-level-navbar
-        navbar]
+       [multi-level-navbar]
        [site/page-title "Products" breadcrumb]
        [:div.container
         [:div.row

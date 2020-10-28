@@ -2,11 +2,12 @@
     (:require [reagent.core :as r]
               [reagent.dom :as rdom]
               [psonia.app.layouts.site :refer [site-layout]]
-              [psonia.app.routes :as routes :refer [hook-browser-navigation!]]
               [psonia.app.views :as views]
+              [psonia.app.routes :refer [init-routes! router-component] :as routes]
               [re-frame.core :as re-frame]
               [cljs.spec.gen.alpha :as gen]
               [psonia.app.entities.products :as products]
+              [psonia.app.entities.vendors :as vendors]
               [cljs.spec.alpha :as s]
               [clojure.test.check]
               [clojure.test.check.properties]))
@@ -16,15 +17,14 @@
  (fn [_ _]
    {:active-panel :home
     :panels views/panels
-    :products (clojure.set/index (gen/sample (s/gen ::products/spec) 30) [:id])}))
+    :products (clojure.set/index (gen/sample (s/gen ::products/spec) 5) [:id])}))
 
 (defn render-active-panel []
-  (re-frame/dispatch-sync [:initialize-db])
-  (rdom/render
-   [site-layout]
-   (.getElementById js/document "app")))
+  (rdom/render [router-component {:router routes/router}]
+            (.getElementById js/document "app")))
 
 (defn init []
+  (re-frame/clear-subscription-cache!)
   (re-frame/dispatch-sync [:initialize-db])
-  (hook-browser-navigation!)
+  (init-routes!) ;; Reset routes on figwheel reload
   (render-active-panel))
