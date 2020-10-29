@@ -5,7 +5,7 @@
 
 (s/def ::address (s/keys :req-un [::line-one ::line-two ::line-three]))
 
-(s/def ::fica-documents (s/keys :req-un [::proof-of-residence ::id-number ::id-proof ::tax-number-proof ::proof-of-bank]))
+(s/def ::fica-documents (s/keys :req-un [::proof-of-residence ::id-number ::id-document ::tax-number ::sars-document ::proof-of-bank]))
 
 (s/def ::contact-details (s/keys :req-un [::cellphone-number ::email]))
 
@@ -18,7 +18,7 @@
 (s/def ::line-three (s/and string? #(> (count %) 10)))
 (s/def ::proof-of-residence (s/and string? #(> (count %) 10)))
 (s/def ::id-document (s/and string? #(> (count %) 10)))
-(s/def ::income-tax-number (s/and string? #(> (count %) 10)))
+(s/def ::sars-document (s/and string? #(> (count %) 10)))
 (s/def ::proof-of-bank (s/and string? #(> (count %) 10)))
 (s/def ::id (s/and int? pos?))
 (s/def ::tax-number (s/and string? #(> (count %) 10)))
