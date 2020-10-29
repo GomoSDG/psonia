@@ -16,7 +16,8 @@
  {:app {:target     :browser
         :output-dir "resources/public/js"
         :asset-path "/js"
-        :modules    {:main {:entries [psonia.app.core]}}
+        :modules    {:main {:entries [psonia.app.core]
+                            :init-fn psonia.app.core/init}}
 
 
         :devtools {:repl-init-ns cljs.user

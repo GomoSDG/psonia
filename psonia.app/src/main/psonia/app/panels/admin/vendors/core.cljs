@@ -2,8 +2,10 @@
   (:require [psonia.app.layouts.site :as site]
             [re-frame.core :as re-frame]
             [reagent.ratom :as ratom]
+            [reagent.core :as r]
             [psonia.app.panels.components :refer [multi-level-navbar static-sidebar]]
-            [psonia.app.panels.admin.vendors.components :refer [vendor-list]]))
+            [psonia.app.panels.admin.vendors.components :refer [vendor-list]]
+            ["react-cropper" :refer (Cropper)]))
 
 (def breadcrumb [{:name "Home"
                   :url  "#"
@@ -24,6 +26,14 @@
        [:div.container.mb-5.pb-3
         [:div.bg-light.box-shadow-lg.rounded-lg.overflow-hidden
          [:div.row
+          [:> Cropper {:src "/150.png"
+                       :style {:height 400
+                               :width "100%"}
+                       :initialAspectRatio 16 / 9
+                       :guides false
+                       :responsive true
+                       :view-mode 1
+                       :auto-crop-area 1}]
           [static-sidebar
            [{:name  "Something"
              :items [{:name   "Hello World"
