@@ -43,36 +43,40 @@
 
 (defn vendor-view []
   (fn []
-    (let [{:keys [name]} (first @(re-frame/subscribe [:vendors]))]
-      [:<>
-       [multi-level-navbar]
-       [site/page-title name breadcrumb]
-       [:div.container.mb-5.pb-3
-       [:div.bg-light.box-shadow-lg.rounded-lg.overflow-hidden
-        [:div.row
-         [:section.col-lg-12.pt-lg-4.pb-4.mb-3
-          [:h2.h3.py-2.text-center.text-sm-left
-           "New / Edit Vendor"]
-          [:div.bg-secondary.rounded-lg.p-4.mb-4
-           ;; Image selection
-           [:div.media.align-items-center
-            [:img
-             {:alt "Createx Studio",
-              :width "90",
-              :src "img/marketplace/account/avatar.png"}]
-            [:div.media-body.pl-3
-             [cropper-widget {:id  "cropModal"
-                              :src "/150.jpg"}]
-             [:div.p.mb-0.font-size-ms.text-muted
-              "Upload JPG, GIF or PNG image. 300 x 300 required."]]]]
-           ;; Form
+    (let [{:keys [name]} (first @(re-frame/subscribe [:vendors]))
+          image (ratom/atom "")
+          set-image #(reset! image %)]
+      (fn []
+        [:<>
+         [multi-level-navbar]
+         [site/page-title name breadcrumb]
+         [:div.container.mb-5.pb-3
+          [:div.bg-light.box-shadow-lg.rounded-lg.overflow-hidden
            [:div.row
-            [:div.col-sm-12
-             [:div.form-group
-              [:label {:for "vendor-name"}
-               "Vendor Name"]
-              [:input#vendor-name.form-control {:type "text"
-                                                :value name}]]]]]]]]])))
+            [:section.col-lg-12.pt-lg-4.pb-4.mb-3
+             [:h2.h3.py-2.text-center.text-sm-left
+              "New / Edit Vendor"]
+             [:div.bg-secondary.rounded-lg.p-4.mb-4
+              ;; Image selection
+              [:div.media.align-items-center
+               [:img
+                {:alt "Createx Studio",
+                 :width "90",
+                 :src (or @image)}]
+               [:div.media-body.pl-3
+                [cropper-widget {:id  "cropModal"
+                                 :crop-fn set-image
+                                 :src "/150.jpg"}]
+                [:div.p.mb-0.font-size-ms.text-muted
+                 "Upload JPG, GIF or PNG image. 300 x 300 required."]]]]
+             ;; Form
+             [:div.row
+              [:div.col-sm-12
+               [:div.form-group
+                [:label {:for "vendor-name"}
+                 "Vendor Name"]
+                [:input#vendor-name.form-control {:type "text"
+                                                  :value name}]]]]]]]]]))))
 
 (re-frame/reg-sub
  :vendors

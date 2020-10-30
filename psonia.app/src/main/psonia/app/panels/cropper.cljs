@@ -29,7 +29,7 @@
                         :display   "block"}
                 :on-load   #(reset! cropper (Cropper. (.-target %) #js {"aspectRatio" aspect-ratio}))}]]]])))
 
-(defn cropper-widget [{:keys [id]
+(defn cropper-widget [{:keys [id crop-fn]
                       :as   options}]
   (let [crop     (ratom/atom nil)
         init     (ratom/atom nil)
@@ -63,14 +63,16 @@
            [:div.modal-footer
             [:button.btn.btn-primary.btn-sm {:type "button"
                                              :on-click (fn []
-                                                         (js/console.log (-> (.getCroppedCanvas @crop)
-                                                                             (.toDataURL)))
+                                                         (crop-fn (-> (.getCroppedCanvas @crop)
+                                                                      (.toDataURL)))
                                                          (-> ($ (str "#" id))
                                                              (.modal "hide")))}
              "Save changes"]]]]]]
        [:<>
         [:input#file {:type      "file"
                       :hidden    true
+                      :multiple  false
+                      :accept    "image/*"
                       :on-change (load-image data-url id)}]
         [:label.btn.btn-light.btn-shadow.btn-sm.mb-2
          {:type "button"
