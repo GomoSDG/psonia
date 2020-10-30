@@ -5,7 +5,7 @@
             [reagent.core :as r]
             [psonia.app.panels.components :refer [multi-level-navbar static-sidebar]]
             [psonia.app.panels.admin.vendors.components :refer [vendor-list]]
-            [psonia.app.panels.cropper :refer [cropper cropper-modal cropper-modal-button]]))
+            [psonia.app.panels.cropper :refer [cropper cropper-modal]]))
 
 (def breadcrumb [{:name "Home"
                   :url  "#"
@@ -30,7 +30,7 @@
            [{:name  "Something"
              :items [{:name   "Hello World"
                       :icon   "czi-home"
-                      :href "#"
+                      :href   "#"
                       :active true}
                      {:name "Hello to you too"
                       :href "#"}]}]]
@@ -42,10 +42,8 @@
              [vendor-list @vendors]]]]]
          [:div.row
           [:div.col-lg-12
-           [cropper-modal-button {:id "cropModal"
-                     :src "/150.jpg"}]]]]]
-       [cropper-modal {:src "/150.jpg"
-                       :id "cropModal"}]])))
+           [cropper-modal {:id  "cropModal"
+                           :src "/150.jpg"}]]]]]])))
 
 (defn vendor-view []
   (fn []
