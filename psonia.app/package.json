@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "bulma": "^0.9.0",
+    "cropperjs": "^1.5.9",
     "react": "^16.13.0",
     "react-cropper": "^2.1.4",
     "react-dom": "^16.13.0"

@@ -5,7 +5,7 @@
             [reagent.core :as r]
             [psonia.app.panels.components :refer [multi-level-navbar static-sidebar]]
             [psonia.app.panels.admin.vendors.components :refer [vendor-list]]
-            ["react-cropper" :refer (Cropper)]))
+            [psonia.app.panels.cropper :refer [cropper cropper-modal cropper-modal-button]]))
 
 (def breadcrumb [{:name "Home"
                   :url  "#"
@@ -26,14 +26,6 @@
        [:div.container.mb-5.pb-3
         [:div.bg-light.box-shadow-lg.rounded-lg.overflow-hidden
          [:div.row
-          [:> Cropper {:src "/150.png"
-                       :style {:height 400
-                               :width "100%"}
-                       :initialAspectRatio 16 / 9
-                       :guides false
-                       :responsive true
-                       :view-mode 1
-                       :auto-crop-area 1}]
           [static-sidebar
            [{:name  "Something"
              :items [{:name   "Hello World"
@@ -47,7 +39,13 @@
             [:h2.h3.py-2.text-center.text-sm-left
              "All Vendors"]
             [:div.table-responsive.font-size-md
-             [vendor-list @vendors]]]]]]]])))
+             [vendor-list @vendors]]]]]
+         [:div.row
+          [:div.col-lg-12
+           [cropper-modal-button {:id "cropModal"
+                     :src "/150.jpg"}]]]]]
+       [cropper-modal {:src "/150.jpg"
+                       :id "cropModal"}]])))
 
 (defn vendor-view []
   (fn []
