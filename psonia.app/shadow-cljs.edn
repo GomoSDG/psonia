@@ -33,4 +33,7 @@
          :output-dir "resources/public/js"
          :asset-path "/js"
          :modules    {:main {:entries [psonia.app.core]
-                             :init-fn psonia.app.core/init}}}}}
+                             :init-fn psonia.app.core/init}}
+
+         :js-options {:resolve {"jquery" {:target :global
+                                          :global "$"}}}}}}
