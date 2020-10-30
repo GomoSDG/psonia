@@ -6,58 +6,74 @@
 (defn crop [cropper data]
   (fn []))
 
-(defn cropper [{:keys [src crop-fn aspect-ratio cropper init]
+(defn load-image [data-url id]
+  (fn [e]
+    (let [reader (js/FileReader.)
+          file   (aget (.-files (.-target e)) 0)]
+      (when file
+        (.readAsDataURL reader file)
+        (set! (.-onload reader) #(reset! data-url (.-result reader)))
+        (-> ($ (str "#" id))
+            (.modal "show"))))))
+
+(defn cropper [{:keys [src crop-fn aspect-ratio cropper id]
                 :or   {aspect-ratio 19 / 6
-                       cropper      (ratom/atom nil)
-                       init         (ratom/atom nil)}}]
+                       cropper      (ratom/atom nil)}}]
   (let []
     (fn []
       [:div.container
        [:div.row
         [:div.col-sm-11
-         [:img {:src   src
+         [:img {:src   @src
                 :style {:max-width "100%"
                         :display   "block"}
-                :ref   #(reset! init (fn [] (reset! cropper (Cropper. % #js {"aspectRatio" aspect-ratio}))))}]]]
-       [:div.row.mt-2
-        [:div.col-sm-12
-         [:button.btn.btn-light.btn-shadow.btn-sm.mb-2
-          {:type     "button"}
-          [:i.czi-loading.mr-2]
-          "Change"]]]])))
+                :on-load   #(reset! cropper (Cropper. (.-target %) #js {"aspectRatio" aspect-ratio}))}]]]])))
 
-(defn cropper-modal [{:keys [id]
+(defn cropper-widget [{:keys [id]
                       :as   options}]
-  (let [crop (ratom/atom nil)
-        init (ratom/atom nil)]
-    ;; jquery setup
-
+  (let [crop     (ratom/atom nil)
+        init     (ratom/atom nil)
+        data-url (ratom/atom nil)
+        shown?   (ratom/atom nil)]
     (fn []
-      ;; jquery setup
-      
-
       [:<>
        [:div {:style {:position "absolute"}}
         [:div.modal {:tabIndex "-1"
                      :role     "dialog"
                      :id       id
-                     :ref #(-> ($ (str "#" id))
-                               (.on  "shown.bs.modal"  @init))}
+                     :ref      #(-> ($ (str "#" id))
+                                    (.on  "shown.bs.modal"  (fn []
+                                                              (reset! shown? true)))
+                                    (.on "hide.bs.modal" (fn []
+                                                           (reset! shown? false)
+                                                           (.destroy @crop)
+                                                           (reset! data-url nil))))}
          [:div.modal-dialog.modal-dialog-centered {:role "document"}
           [:div.modal-content
            [:div.modal-header
-            [:h5.modal-title "Update Image"]
+            [:h5.modal-title "Crop Image"]
             [:button.close {:type         "button"
                             :data-dismiss "modal"
                             :aria-label   "close"}
              [:span {:aria-hidden             true
                      :dangerouslySetInnerHTML {:__html "&times;"}}]]]
            [:div.modal-body
-            [cropper (assoc options :cropper crop :aspect-ratio 1 :init init)]]
+            (when @shown?
+              [cropper (assoc options :cropper crop :aspect-ratio 1 :src data-url)])]
            [:div.modal-footer
-            [:button.btn.btn-primary.btn-sm {:type "button"}
+            [:button.btn.btn-primary.btn-sm {:type "button"
+                                             :on-click (fn []
+                                                         (js/console.log (-> (.getCroppedCanvas @crop)
+                                                                             (.toDataURL)))
+                                                         (-> ($ (str "#" id))
+                                                             (.modal "hide")))}
              "Save changes"]]]]]]
-       [:button.btn.btn-outline-secondary {:type        "button"
-                                           :data-toggle "modal"
-                                           :data-target (str "#" id)}
-        "Upload Image"]])))
+       [:<>
+        [:input#file {:type      "file"
+                      :hidden    true
+                      :on-change (load-image data-url id)}]
+        [:label.btn.btn-light.btn-shadow.btn-sm.mb-2
+         {:type "button"
+          :for  "file"}
+         [:i.czi-loading.mr-2]
+         "Change"]]])))

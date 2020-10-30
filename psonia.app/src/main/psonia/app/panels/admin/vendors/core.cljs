@@ -5,7 +5,7 @@
             [reagent.core :as r]
             [psonia.app.panels.components :refer [multi-level-navbar static-sidebar]]
             [psonia.app.panels.admin.vendors.components :refer [vendor-list]]
-            [psonia.app.panels.cropper :refer [cropper cropper-modal]]))
+            [psonia.app.panels.cropper :refer [cropper-widget]]))
 
 (def breadcrumb [{:name "Home"
                   :url  "#"
@@ -39,11 +39,7 @@
             [:h2.h3.py-2.text-center.text-sm-left
              "All Vendors"]
             [:div.table-responsive.font-size-md
-             [vendor-list @vendors]]]]]
-         [:div.row
-          [:div.col-lg-12
-           [cropper-modal {:id  "cropModal"
-                           :src "/150.jpg"}]]]]]])))
+             [vendor-list @vendors]]]]]]]])))
 
 (defn vendor-view []
   (fn []
@@ -65,11 +61,8 @@
               :width "90",
               :src "img/marketplace/account/avatar.png"}]
             [:div.media-body.pl-3
-             [:button.btn.btn-light.btn-shadow.btn-sm.mb-2
-              {:type "button"}
-              [:i.czi-loading.mr-2]
-              "Change "
-              [:span.d-none.d-sm-inline "avatar"]]
+             [cropper-widget {:id  "cropModal"
+                              :src "/150.jpg"}]
              [:div.p.mb-0.font-size-ms.text-muted
               "Upload JPG, GIF or PNG image. 300 x 300 required."]]]]
            ;; Form
