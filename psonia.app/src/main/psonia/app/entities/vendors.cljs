@@ -1,7 +1,7 @@
 (ns psonia.app.entities.vendors
   (:require [cljs.spec.alpha :as s]))
 
-(s/def ::spec (s/keys :req-un [::name ::address ::active ::created-on ::contact-details ::fica-documents]))
+(s/def ::spec (s/keys :req-un [::name ::address ::status ::created-on ::contact-details ::fica-documents]))
 
 (s/def ::address (s/keys :req-un [::line-one ::line-two ::line-three]))
 
@@ -22,5 +22,5 @@
 (s/def ::proof-of-bank (s/and string? #(> (count %) 10)))
 (s/def ::id (s/and int? pos?))
 (s/def ::tax-number (s/and string? #(> (count %) 10)))
-(s/def ::active boolean?)
+(s/def ::status #{"ACTIVE" "PENDING" "OUTSTANDING FICA DOCUMENTS"})
 (s/def ::created-on (s/and string? #(> (count %) 10)))

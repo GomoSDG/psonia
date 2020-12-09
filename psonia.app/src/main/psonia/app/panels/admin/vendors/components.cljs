@@ -1,4 +1,6 @@
-(ns psonia.app.panels.admin.vendors.components)
+(ns psonia.app.panels.admin.vendors.components
+  (:require [reagent.ratom :as ratom]
+            [psonia.app.panels.cropper :refer [cropper-widget]]))
 
 (defn vendor-list-item [item]
   (let [{name       :name
@@ -25,6 +27,43 @@
                                            :data-original-title "Remove"
                                            :title               ""}
        [:i.czi-trash]]]]))
+
+(defn vendor-general-tab 
+  ([options {:keys [name status] :as vendor}]
+   (fn []
+    (let [image (ratom/atom "")
+          set-image #(reset! image %)]
+      [:div.tab-pane.fade.active.show {:id (:id options)
+                           :role "tabpanel"}
+       [:div.bg-secondary.rounded-lg.p-4.mb-4
+        ;; Image selection
+        [:div.media.align-items-center
+         [:img {:alt  "Createx Studio",
+                :width "90",
+                :src (or @image)}]
+         [:div.media-body.pl-3
+          [cropper-widget {:id  "cropModal"
+                           :crop-fn set-image
+                           :src "/150.jpg"}]
+          [:div.p.mb-0.font-size-ms.text-muted
+           "Upload Vendor Image"]]]]
+       ;; Form
+       [:div.row
+        [:div.col-sm-12
+         ;; Vendor Name
+         [:div.form-group
+          [:label {:for "vendor-name"}
+           "Vendor Name"]
+          [:input#vendor-name.form-control {:type "text"
+                                            :value name}]]
+         ;; Vendor Status
+         [:div.form-group
+          [:label {:for "vendor-status"}
+           "Status"]
+          [:input#vendor-status.form-control {:readOnly true
+                                              :value status}]]]]])))
+  ([vendor]
+   (vendor-general-tab nil vendor)))
 
 
 

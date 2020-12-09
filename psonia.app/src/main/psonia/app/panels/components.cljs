@@ -1,5 +1,6 @@
 (ns psonia.app.panels.components
-  (:require [psonia.app.layouts.site :as site]))
+  (:require [psonia.app.layouts.site :as site]
+            [reagent.ratom :as ratom]))
 
 (defn multi-level-navbar []
   [:header.box-shadow-sm
@@ -57,4 +58,49 @@
        [:div#sidebar.secondary-nav.collapse.border-right
         (for [s sections]
           [sidebar-section s])]]])))
+
+(comment [{:body fn
+           :display-name "General"
+           :id :general}
+          {:body fn
+           :icon ""
+           :display-name "Contact Details"
+           :id :contact-details}])
+
+(comment [])
+
+(defn tab [id name body]
+  (js/console.log "Body" (if (fn? body)
+                           body
+                           (fn [] body))
+                  body)
+  {:body (if (fn? body)
+           body
+           (fn [] body))
+   :id id
+   :display-name name})
+
+(defn tablist
+  ([options tablist]
+   (let [cnt (ratom/atom 0)
+         panels (cycle (map :id tablist))]
+     (fn []
+       [:<>
+        [:ul.nav.nav-tabs {:role "tablist"}
+         (for [{:keys [display-name id]} tablist]
+           ^{:key id} [:li.nav-item
+                       [:a.nav-link.px-0  {:href (str "#" id)}
+                        [:div.d-none.d-lg-block {:data-toggle "tab"
+                                                 :role "tab"}
+                         display-name]
+                        [:div.d-lg-none.text-center {:data-toggle "tab"
+                                                     :role "tab"}
+                         display-name]]])]
+        [:div.tab-content
+         (for [{:keys [id body]} tablist]
+           ^{:key (str id "body")} [:div.tab-pane.fade.active.show {:id id
+                                                        :role "tabpanel"}
+                       [body]])]])))
+  ([t]
+   (tablist nil t)))
 
