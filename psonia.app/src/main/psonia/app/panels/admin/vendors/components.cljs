@@ -30,10 +30,10 @@
 
 (defn vendor-general-tab 
   ([options {:keys [name status] :as vendor}]
-   (fn []
-    (let [image (ratom/atom "")
-          set-image #(reset! image %)]
-      [:div.tab-pane.fade.active.show {:id (:id options)
+   (let [image (ratom/atom "")
+         set-image #(reset! image %)]
+     (fn []
+       [:div.tab-pane.fade.active.show {:id (:id options)
                            :role "tabpanel"}
        [:div.bg-secondary.rounded-lg.p-4.mb-4
         ;; Image selection
