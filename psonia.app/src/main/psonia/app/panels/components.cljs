@@ -83,24 +83,29 @@
 (defn tablist
   ([options tablist]
    (let [cnt (ratom/atom 0)
-         panels (cycle (map :id tablist))]
+         tabs (clojure.set/index tablist [:id])
+         current-tab (ratom/atom (:id (first tablist)))]
      (fn []
        [:<>
-        [:ul.nav.nav-tabs {:role "tablist"}
-         (for [{:keys [display-name id]} tablist]
-           ^{:key id} [:li.nav-item
-                       [:a.nav-link.px-0  {:href (str "#" id)}
-                        [:div.d-none.d-lg-block {:data-toggle "tab"
-                                                 :role "tab"}
-                         display-name]
-                        [:div.d-lg-none.text-center {:data-toggle "tab"
-                                                     :role "tab"}
-                         display-name]]])]
+        [:ul.nav.nav-tabs.nav-justified {:role "tablist"}
+         (doall
+          (for [{:keys [display-name id]} tablist]
+            ^{:key id} [:li.nav-item
+                        [:a.nav-link.px-0  {:href (str "#" id)
+                                            :class (if (= @current-tab id) ["active"])
+                                            :on-click #(reset! current-tab id)}
+                         [:div.d-none.d-lg-block {:data-toggle "tab"
+                                                  :role "tab"}
+                          display-name]
+                         [:div.d-lg-none.text-center {:data-toggle "tab"
+                                                      :role "tab"}
+                          display-name]]]))]
         [:div.tab-content
-         (for [{:keys [id body]} tablist]
-           ^{:key (str id "body")} [:div.tab-pane.fade.active.show {:id id
-                                                        :role "tabpanel"}
-                       [body]])]])))
+         (doall
+          (for [{:keys [id body]} tablist]
+            ^{:key (str id "body")} [:div.tab-pane.fade {:id id
+                                                         :role "tabpanel"
+                                                         :class (if (= @current-tab id) ["show" "active"])}
+                                     [body]]))]])))
   ([t]
    (tablist nil t)))
-

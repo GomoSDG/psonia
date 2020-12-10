@@ -1,6 +1,7 @@
 (ns psonia.app.panels.admin.vendors.components
   (:require [reagent.ratom :as ratom]
-            [psonia.app.panels.cropper :refer [cropper-widget]]))
+            [psonia.app.panels.cropper :refer [cropper-widget]]
+            [fork.re-frame :as fork]))
 
 (defn vendor-list-item [item]
   (let [{name       :name
@@ -29,10 +30,10 @@
        [:i.czi-trash]]]]))
 
 (defn vendor-general-tab 
-  ([options {:keys [name status] :as vendor}]
+  ([options {:keys [name status active? contact-details] :as vendor}]
    (let [image (ratom/atom "")
          set-image #(reset! image %)]
-     (fn []
+     (fn [options vendor]
        [:div.tab-pane.fade.active.show {:id (:id options)
                            :role "tabpanel"}
        [:div.bg-secondary.rounded-lg.p-4.mb-4
@@ -47,23 +48,93 @@
                            :src "/150.jpg"}]
           [:div.p.mb-0.font-size-ms.text-muted
            "Upload Vendor Image"]]]]
-       ;; Form
-       [:div.row
-        [:div.col-sm-12
-         ;; Vendor Name
-         [:div.form-group
-          [:label {:for "vendor-name"}
-           "Vendor Name"]
-          [:input#vendor-name.form-control {:type "text"
-                                            :value name}]]
-         ;; Vendor Status
-         [:div.form-group
-          [:label {:for "vendor-status"}
-           "Status"]
-          [:input#vendor-status.form-control {:readOnly true
-                                              :value status}]]]]])))
+        ;; Form
+        [:div.row
+         [:div.col-sm-12
+          ;; Vendor Name
+          [fork/form
+           {:initial-values {"name" name}}
+           (fn [{:keys [values handle-change handle-blur handle-submit]}]
+             [:div.card
+              [:div.card-body
+               [:h6.card-title "Name"]
+               [:div.form-group
+                [:label {:for "vendor-name"}
+                 "Vendor Name"]
+                [:input#vendor-name.form-control {:type "text"
+                                                  :name "name"
+                                                  :value (values "name")
+                                                  :on-change handle-change
+                                                  :on-blur handle-blur}]]
+               [:button.btn.btn-success.float-right
+                {:on-click handle-submit}
+                "Save Changes."]]])]
+
+          ;; Contact Details
+          [fork/form
+           {:initial-values contact-details
+            :keywordize-keys true}
+           (fn [{:keys [values handle-change handle-blur handle-submit]}]
+             [:div.card.mt-3
+              [:div.card-body
+               [:h6.card-title "Contact Details"]
+               [:div.form-group
+                [:label {:for "cellphone-number"}
+                 "Cellphone Number"]
+                [:input#cellphone-number.form-control {:type "text"
+                                                       :name :cellphone-number
+                                                       :value (values :cellphone-number)
+                                                       :on-change handle-change
+                                                       :on-blur handle-blur}]]
+               [:div.form-group
+                [:label {:for "email"}
+                 "E-mail"]
+                [:input#email.form-control {:type "text"
+                                                  :name :email
+                                                  :value (values :email)
+                                                  :on-change handle-change
+                                            :on-blur handle-blur}]]
+               [:button.btn.btn-success.float-right
+                "Save Changes"]]])]
+
+          ;; Vendor Status
+          [:div.card.mt-3
+           [:div.card-body
+            [:h6.card-title "Status"]
+            [:div.form-group
+             [:label {:for "vendor-status"}
+              "Status"]
+             [:input#vendor-status.form-control {:readOnly true
+                                                 :value (:status-name status)}]]
+            [:div.form-group.float-right
+             (when (:can-activate? status)
+               [:button.btn.btn-shadow.btn-success
+                "Activate"])
+             (when (:can-deactivate? status)
+               [:button.btn.btn-shadow.btn-danger
+                "Deactivate"])]]]]]])))
   ([vendor]
    (vendor-general-tab nil vendor)))
+
+(defn vendor-fica-documents-tab
+  ([options vendor]
+   (let []
+     (fn [options vendor]
+       [:div.tab-pane.fade.active.show {:id (:id options)
+                                        :role "tabpanel"}
+        [:h1 "Hello World!"]])))
+  ([vendor]
+   (vendor-fica-documents-tab nil vendor)))
+
+(defn vendor-address-details
+  ([option vendor]
+   (let []
+     (fn [options vendors]
+       [:div.tab-pane.fade.active.show {:id (:id options)
+                                        :role "tabpanel"}
+        [:h1 "Hello World!"]])))
+  ([vendor]
+   (vendor-address-details nil vendor)))
 
 
 

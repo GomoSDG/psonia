@@ -4,7 +4,7 @@
             [reagent.ratom :as ratom]
             [reagent.core :as r]
             [psonia.app.panels.components :refer [multi-level-navbar static-sidebar tablist tab]]
-            [psonia.app.panels.admin.vendors.components :refer [vendor-list vendor-general-tab]]))
+            [psonia.app.panels.admin.vendors.components :refer [vendor-list vendor-general-tab vendor-fica-documents-tab]]))
 
 (def breadcrumb [{:name "Home"
                   :url  "#"
@@ -43,10 +43,6 @@
 (defn vendor-view []
   (fn []
     (let [{:keys [name status] :as vendor} (first @(re-frame/subscribe [:vendors]))]
-      (js/console.log "Test" (tablist [(tab :general
-                                            "General Details"
-                                            [vendor-general-tab {:id "general"}
-                                             vendor])]))
       (fn []
         [:<>
          [multi-level-navbar]
@@ -73,6 +69,10 @@
               [tablist [(tab :general
                              "General Details"
                              [vendor-general-tab {:id "general"}
+                              vendor])
+                        (tab :fica-documents
+                             "Fica Documents"
+                             [vendor-fica-documents-tab {:id "fica-documents"}
                               vendor])]]]]]]]]))))
 
 (re-frame/reg-sub
