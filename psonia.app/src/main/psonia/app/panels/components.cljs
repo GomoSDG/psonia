@@ -1,6 +1,7 @@
 (ns psonia.app.panels.components
   (:require [psonia.app.layouts.site :as site]
-            [reagent.ratom :as ratom]))
+            [reagent.ratom :as ratom]
+            [jquery :as $ ]))
 
 (defn multi-level-navbar []
   [:header.box-shadow-sm
@@ -109,3 +110,57 @@
                                      [body]]))]])))
   ([t]
    (tablist nil t)))
+
+;; File Uploader Component
+
+(defn file-drop-handler [reader]
+  (defn handle-file-drop [ev]
+    (let [files (.-items (.-dataTransfer ev))]
+      ;; prevent default behavior
+      (.preventDefault ev)
+      (doseq [i (range (.-length files))]
+        (let [file (aget files i)]
+          (js/console.log (.readAsDataURL reader (.getAsFile file))))))))
+
+(defn file-uploader [reset-file!]
+  (let [reader  (js/FileReader.)]
+    (.addEventListener reader "load" #(-> (.-result reader)
+                                          reset-file!))
+    (fn []
+      [:div.cz-file-drop-area {:on-drop      (file-drop-handler reader)
+                               :on-drag-over #(.preventDefault %)}
+       [:div.cz-file-drop-icon.czi-cloud-upload]
+       [:span.cz-file-drop-message "Drag and drop here to upload."]
+       [:input#file-uploader.cz-file-drop-input {:type     "file"
+                                   :multiple false
+                                   :accept   "image/*"}]
+       [:label.cz-file-drop-btn.btn.btn-primary.btn-sm {:type "button"
+                                                        :for "file-uploader"}
+        "Or select file"]])))
+
+;; dropdown
+(defn toggle-menu-items [e]
+  (.preventDefault e)
+  (.stopPropagation e)
+
+  (this-as this
+    (let [el ($ this)]
+      (-> (.siblings el)
+          (.toggleClass "show"))
+
+      (if (not (-> (.next el)
+                   (.hasClass "show")))
+        (-> (.parents el ".dropdown-menu")
+            (.first)
+            (.find "show")
+            (.removeClass "show")))
+
+      (-> (.parents el "li.nav-item.dropdown.show")
+          (.on "hidden.bs.dropdown", (fn []
+                                       (-> ($ ".dropdown-submenu .show")
+                                           (.removeClass "show"))))))))
+
+(defn init-dropdown [^js el]
+  (when el
+    (-> ($ el)
+        (.on "click" toggle-menu-items))))

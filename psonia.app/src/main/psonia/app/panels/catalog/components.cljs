@@ -72,6 +72,42 @@
      (when original-price
        [:del.font-size-sm.text-muted "R" (gstring/format "%.2f" original-price)])]]])
 
+(defn featured-product [product]
+  (fn [product]
+    [:div.card.product-card-alt
+     [:div.product-thumb
+      [:button.btn-wishlist.btn-sm {:type "button"}
+       [:i.czi-heart]]
+      [:div.product-card-actions
+       [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2 {:href "#"}
+        [:i.czi-eye]]
+       [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2 {:href "#"}
+        [:i.czi-cart]]]
+      [:a.product-thumb-overlay]
+      [:img {:alt "Product", :src "https://via.placeholder.com/500"}]]
+     [:div.card-body
+      [:div.d-flex.flex-wrap.justify-content-between.align-items-start.pb-2
+       [:div.text-muted.font-size-xs.mr-1
+        "by "
+        [:a.product-meta.font-weight-medium {:href "#"}
+         "Vendor Name"]
+        " in "
+        [:a.product-meta.font-weight-medium {:href "#"}
+         "Services"]]
+       [:div.star-rating
+        [rating (:avg-rating product)]]]
+      [:h3.product-title.font-size-sm.mb-2
+       [:a {:href "#"}
+        (:name product)]]
+      [:div.d-flex.flex-wrap.justify-content-between.align-items-center
+       [:div.font-size-sm.mr-2
+        [:i.czi-money-bag
+         "500"
+         [:span.font-size-xs.ml-1
+          "Sales"]]]
+       [:div.bg-faded-accent.text-accent.rounded-sm.py-1.px-2
+        (str "R"(:price product))]]]]))
+
 (defn product [product]
   (let [{:keys [id on-promotion image-b64]} product]
     [:div.card.product-card

@@ -5,9 +5,13 @@
               [reitit.frontend.controllers :as rfc]
               [reitit.coercion.spec :as rss]
               [psonia.app.panels.catalog.core :as catalog]
+              [psonia.app.panels.home :as home]
               [psonia.app.panels.admin.vendors.core :as vendors]))
 
 (def routes ["/"
+             [""
+              {:name :routes/home
+               :view #'home/panel}]
              ["products"
               {:name :routes/products
                :view #'catalog/panel}]

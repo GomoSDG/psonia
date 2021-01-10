@@ -1,7 +1,8 @@
 (ns psonia.app.panels.admin.vendors.components
   (:require [reagent.ratom :as ratom]
             [psonia.app.panels.cropper :refer [cropper-widget]]
-            [fork.re-frame :as fork]))
+            [fork.re-frame :as fork]
+            [psonia.app.panels.components :refer [file-uploader]]))
 
 (defn vendor-list-item [item]
   (let [{name       :name
@@ -51,6 +52,7 @@
         ;; Form
         [:div.row
          [:div.col-sm-12
+
           ;; Vendor Name
           [fork/form
            {:initial-values {"name" name}}
@@ -122,7 +124,24 @@
      (fn [options vendor]
        [:div.tab-pane.fade.active.show {:id (:id options)
                                         :role "tabpanel"}
-        [:h1 "Hello World!"]])))
+        ;; Form
+        [:div.row
+         [:div.col-sm-12
+          [:div.card
+           [:div.card-body
+            [:h6.card-title "Identity Document"]
+            [:p "Upload vendor ID Document."]
+            [file-uploader js/console.log]
+            [:button.btn.btn-success.float-right.mt-2
+             "Save Changes."]]]
+
+          [:div.card.mt-3
+           [:div.card-body
+            [:h6.card-title "Proof of address"]
+            [:p "Uploade Proof of address."]
+            [file-uploader js/console.log]
+            [:button.btn.btn-success.float-right.mt-2
+             "Save Changes."]]]]]])))
   ([vendor]
    (vendor-fica-documents-tab nil vendor)))
 
@@ -132,7 +151,7 @@
      (fn [options vendors]
        [:div.tab-pane.fade.active.show {:id (:id options)
                                         :role "tabpanel"}
-        [:h1 "Hello World!"]])))
+        ])))
   ([vendor]
    (vendor-address-details nil vendor)))
 

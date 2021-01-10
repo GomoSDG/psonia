@@ -5,3 +5,4 @@
 
 (defn page-layout [panel]
   (:navbar (meta panel)))
+
