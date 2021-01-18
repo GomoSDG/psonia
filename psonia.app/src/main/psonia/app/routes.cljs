@@ -6,22 +6,26 @@
               [reitit.coercion.spec :as rss]
               [psonia.app.panels.catalog.core :as catalog]
               [psonia.app.panels.home :as home]
+              [psonia.app.panels.product.core :as product]
               [psonia.app.panels.admin.vendors.core :as vendors]))
 
 (def routes ["/"
              [""
-              {:name :routes/home
+              {:name :app/home
                :view #'home/panel}]
              ["products"
-              {:name :routes/products
+              {:name :app/products
                :view #'catalog/panel}]
+             ["product/:id"
+              {:name :app.products/view
+               :view #'product/panel}]
              ["admin/"
               ["vendors"
-               {:name :admin.vendors
+               {:name :app.admin/vendors
                 :view #'vendors/list-all}]
               ["vendors/"
                [":id/view"
-                {:name :admin.vendors.view
+                {:name :app.admin.vendors/view
                  :view #'vendors/vendor-view}]]]])
 
 (defn router-component [{:keys [router]}]

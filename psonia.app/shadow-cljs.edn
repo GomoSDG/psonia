@@ -2,7 +2,8 @@
 {:source-paths
  ["src/dev"
   "src/main"
-  "src/test"]
+  "src/test"
+  "resources"]
 
  :dependencies
  [;; https://https://reagent-project.github.io/
@@ -12,6 +13,10 @@
   [org.clojure/test.check "0.9.0"]
   [metosin/reitit "0.5.10"]
   [fork/fork "2.2.5"]]
+
+ :npm-deps
+ {"currency.js" "2.0.3"
+  "drift-zoom"  "1.4.1"}
 
  :builds
  {:app {:target     :browser

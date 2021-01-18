@@ -1,5 +1,6 @@
 (ns psonia.app.panels.catalog.components
   (:require [goog.string :as gstring]
+            ["drift-zoom" :default Drift]
             [goog.string.format]))
 
 ;; Define feature types and customize
@@ -163,3 +164,99 @@
    [toolbox]
    [product-grid products]])
 
+
+;; product gallery
+;; Code for video in javascript.
+;; // Video thumbnail - open video in lightbox
+;; for (let m = 0; m < videos.length; m++) {
+;;         lightGallery(videos[m], {
+;;                                  selector: 'this',
+;;                                  download: false,
+;;                                  videojs: true,
+;;                                  youtubePlayerParams: {
+;;                                                        modestbranding: 1,
+;;                                                        showinfo: 0,
+;;                                                        rel: 0,
+;;                                                        controls: 0
+;;                                                        },
+;;                                  vimeoPlayerParams: {
+;;                                                      byline: 0,
+;;                                                      portrait: 0,
+;;                                                      color: 'fe696a'
+;;                                                      }
+;;                                  });
+;;         }
+
+(defn init-zoom-pane
+  "Initiates zoom pane to allow for zooming of images."
+  [el]
+  (js/console.log Drift)
+  (Drift. el, #js {"paneContainer" (-> (.-parentElement el)
+                                       (.querySelector ".cz-image-zoom-pane"))}))
+
+(defn init-product-gallery
+  "Initializes light gallery component given options."
+  [el]
+  (when el
+    (let [thumbnails      (.querySelectorAll el ".cz-thumblist-item:not(.video-item)")
+          previews        (.querySelectorAll el ".cz-preview-item")
+          videos          (.querySelectorAll el ".cz-thumblist-item.video-item")
+          activate!       #(-> (.-classList %)
+                               (.add "active"))
+          deactivate      #(-> (.-classList %)
+                               (.remove "active"))]
+
+      ;; Set first picture active
+      (-> (aget thumbnails 0)
+          (activate!))
+
+      (-> (aget previews 0)
+          (activate!))
+
+      ;; Set click events
+      (doseq [t (seq thumbnails)]
+        (.addEventListener t "click" (fn [e]
+                                       (this-as this
+                                         (.preventDefault e)
+                                         ;; Remove Active Classes
+                                         (doseq [i (map list (seq thumbnails) (seq previews))
+                                                 p i]
+                                           (deactivate p))
+
+                                         ;; Add active to selected item
+                                         (activate! this)
+
+                                         (-> (.querySelector el (.getAttribute this "href"))
+                                             (activate!)))))))))
+
+
+(defn product-gallery
+  "Displays a gallery of the product images."
+  [prod]
+  (fn []
+    [:div.cz-product-gallery {:ref init-product-gallery}
+     ;; Preview images with zoom effect.
+     [:div.cz-preview.order-sm-2
+      [:div.cz-preview-item {:id "first"}
+       [:img.cz-image-zoom {:src       "https://via.placeholder.com/250"
+                            :data-zoom "https://via.placeholder.com/250"
+                            :ref       #(when % (init-zoom-pane %))}]
+       [:div.cz-image-zoom-pane]]
+      [:div.cz-preview-item {:id "second"}
+       [:img.cz-image-zoom {:src       "https://via.placeholder.com/250"
+                            :data-zoom "https://via.placeholder.com/250"
+                            :ref       #(when % (init-zoom-pane %))}]
+       [:div.cz-image-zoom-pane]]
+      [:div.cz-preview-item {:id "third"}
+       [:img.cz-image-zoom {:src       "https://via.placeholder.com/250"
+                            :data-zoom "https://via.placeholder.com/250"
+                            :ref       #(when % (init-zoom-pane %))}]
+       [:div.cz-image-zoom-pane]]]
+     ;; Thumbnails
+     [:div.cz-thumblist.order-sm-1
+      [:a.cz-thumblist-item {:href "#first"}
+       [:img {:src "https://via.placeholder.com/500"}]]
+      [:a.cz-thumblist-item {:href "#second"}
+       [:img {:src "https://via.placeholder.com/500"}]]
+      [:a.cz-thumblist-item {:href "#third"}
+       [:img {:src "https://via.placeholder.com/500"}]]]]))
