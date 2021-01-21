@@ -1,6 +1,7 @@
 (ns psonia.app.panels.catalog.components
   (:require [goog.string :as gstring]
             ["drift-zoom" :default Drift]
+            [psonia.app.urls :refer [resolve-href]]
             [goog.string.format]))
 
 ;; Define feature types and customize
@@ -73,41 +74,45 @@
      (when original-price
        [:del.font-size-sm.text-muted "R" (gstring/format "%.2f" original-price)])]]])
 
-(defn featured-product [product]
-  (fn [product]
-    [:div.card.product-card-alt
-     [:div.product-thumb
-      [:button.btn-wishlist.btn-sm {:type "button"}
-       [:i.czi-heart]]
-      [:div.product-card-actions
-       [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2 {:href "#"}
-        [:i.czi-eye]]
-       [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2 {:href "#"}
-        [:i.czi-cart]]]
-      [:a.product-thumb-overlay]
-      [:img {:alt "Product", :src "https://via.placeholder.com/500"}]]
-     [:div.card-body
-      [:div.d-flex.flex-wrap.justify-content-between.align-items-start.pb-2
-       [:div.text-muted.font-size-xs.mr-1
-        "by "
-        [:a.product-meta.font-weight-medium {:href "#"}
-         "Vendor Name"]
-        " in "
-        [:a.product-meta.font-weight-medium {:href "#"}
-         "Services"]]
-       [:div.star-rating
-        [rating (:avg-rating product)]]]
-      [:h3.product-title.font-size-sm.mb-2
-       [:a {:href "#"}
-        (:name product)]]
-      [:div.d-flex.flex-wrap.justify-content-between.align-items-center
-       [:div.font-size-sm.mr-2
-        [:i.czi-money-bag
-         "500"
-         [:span.font-size-xs.ml-1
-          "Sales"]]]
-       [:div.bg-faded-accent.text-accent.rounded-sm.py-1.px-2
-        (str "R"(:price product))]]]]))
+(defn product-card
+  ([options product]
+   (fn [options product]
+     [:div.card.product-card-alt
+      [:div.product-thumb
+       [:button.btn-wishlist.btn-sm {:type "button"}
+        [:i.czi-heart]]
+       [:div.product-card-actions
+        [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2 {:href (resolve-href :app.products/view {:id 1} {})}
+         [:i.czi-eye]]
+        [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2 {:href "#"}
+         [:i.czi-cart]]]
+       [:a.product-thumb-overlay]
+       [:img {:alt "Product", :src "https://via.placeholder.com/550x370"}]]
+      [:div.card-body
+       [:div.d-flex.flex-wrap.justify-content-between.align-items-start.pb-2
+        [:div.text-muted.font-size-xs.mr-1
+         "by "
+         [:a.product-meta.font-weight-medium {:href "#"}
+          "Vendor Name"]
+         " in "
+         [:a.product-meta.font-weight-medium {:href "#"}
+          "Services"]]
+        [:div.star-rating
+         [rating (:avg-rating product)]]]
+       [:h3.product-title.font-size-sm.mb-2
+        [:a {:href "#"}
+         (:name product)]]
+       [:div.d-flex.flex-wrap.justify-content-between.align-items-center
+        [:div.font-size-sm.mr-2
+         [:i.czi-money-bag
+          "500"
+          [:span.font-size-xs.ml-1
+           "Sales"]]]
+        [:div.bg-faded-accent.text-accent.rounded-sm.py-1.px-2
+         (str "R"(:price product))]]]]))
+
+  ([product]
+   (product-card {} product)))
 
 (defn product [product]
   (let [{:keys [id on-promotion image-b64]} product]
@@ -153,17 +158,107 @@
       {:href "shop-list-ls.html"}
       [:i.czi-view-list]]]])
 
-(defn product-grid [products]
-  [:div.row.pt-3.mx-n2
-   (for [prod products]
-     ^{:key prod}[:div.col-lg-3.col-md-4.col-sm-6.px-2.mb-4
-                  [product prod]])])
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; PRODUCT CAROUSEL
+(defn carousel-options
+  ([el]
+   (carousel-options el {}))
+  ([el options]
+   (clj->js {"container" el
+             "controls" false
+             "navPosition" "bottom"
+             "mouseDrag" true
+             "speed" 5
+             "items" 3
+             "gutter" 15
+             "autoplayHoverPause" true
+             "autoplayButtonOutput" false
+             "responsive" {"0" {"items" 1}
+                           "500" {"items" 2}
+                           "768" {"items" 3}
+                           "992" {"items" 3
+                                  "gutter" 30}}})))
+
+(defn product-carousel
+  ""
+  [products]
+  (fn []
+    [:div.cz-carousel.cz-dots-enabled
+     [:div.cz-carousel-inner
+      {:ref (fn [el]
+              (when el
+                (js/tns (carousel-options el))))}
+      (doall
+       (for [prod products]
+         ^{:key prod}
+         [product-card prod]))]]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; PRODUCT GRID
+
+(defn product-grid
+  "Shows a grid of products. Can decide which product tile to use."
+
+  ;; With options
+  ([options products]
+
+   (let [opts (merge
+               {:product-type  :product
+                :product-class []
+                :grid-class    ["pt-3"]}
+               options)]
+     [:div.row.pt-3.mx-n2
+      {:class (:grid-class opts)}
+      (for [prod products]
+        ^{:key prod}
+
+        [:div.col-lg-3.col-md-4.col-sm-6.px-2 {:class (:product-class options)}
+         (case (:product-type opts)
+           :product      [product opts prod]
+           :product-card [product-card opts prod])])]))
+
+  ;; Without options
+  ([products]
+
+   (product-grid {} products)))
 
 (defn product-grid-with-toolbox [products]
   [:section.col-lg-8
    [toolbox]
    [product-grid products]])
 
+(defn category-banner
+  "Display a banner for categories. Products are shown in a carousel"
+  [products]
+  (fn [products]
+    [:div.row
+     [:div.col-md-5
+      [:div.d-flex.flex-column.h-100.overflow-hidden.rounded-lg
+       {:style {:background-color "#f6f8fb"}}
+
+       [:div.d-flex.justify-content-between.px-grid-gutter.py-grid-gutter
+        [:div
+         [:h3.mb-1
+          "Services"]
+         [:a.font-size-md
+          {:href "#"}
+
+          "Shop services"
+          [:i.czi-arrow-right.font-size-xs.align-middle.ml-1]]]
+        [:div.cz-custom-controls
+         {:id "services-carousel"}
+
+         [:button {:type "button"}
+          [:i.czi-arrow-left]]
+         [:button {:type "button"}
+          [:i.czi-arrow-left]]]]
+
+       [:a.d-none.d-md-block.mt-auto
+        [:img.d-block.w-100
+         ;; 2 : 3 aspect ratio
+         {:src "https://via.placeholder.com/720x650/f6f8fb?text=Category+image+goes+here"}]]]]
+
+     ;; Product grid (carousel)
+     [:div.col-md-7.pt-4.pt-md-0
+      [product-grid @products]]]))
 
 ;; product gallery
 ;; Code for video in javascript.
@@ -219,9 +314,8 @@
                                        (this-as this
                                          (.preventDefault e)
                                          ;; Remove Active Classes
-                                         (doseq [i (map list (seq thumbnails) (seq previews))
-                                                 p i]
-                                           (deactivate p))
+                                         (doseq [i (interleave (seq thumbnails) (seq previews))]
+                                           (deactivate i))
 
                                          ;; Add active to selected item
                                          (activate! this)

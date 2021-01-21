@@ -2,31 +2,13 @@
   (:require [psonia.app.panels.components :refer [multi-level-navbar static-sidebar init-dropdown]]
             [psonia.app.layouts.site :as site]
             [re-frame.core :as re-frame]
-            [psonia.app.panels.catalog.components :refer [featured-product]]
-            [reagent.ratom :as ratom]))
+            [psonia.app.panels.catalog.components :refer [product-card product-carousel]]
+            [reagent.ratom :as ratom]
+            [psonia.app.panels.catalog.components :as catalog]))
 
 (def breadcrumb [{:name "Home"
                   :url  "#"
                   :icon :home}])
-
-(defn carousel-options
-  ([el]
-   (carousel-options el {}))
-  ([el options]
-   (clj->js {"container" el
-             "controls" false
-             "navPosition" "bottom"
-             "mouseDrag" true
-             "speed" 5
-             "items" 3
-             "gutter" 15
-             "autoplayHoverPause" true
-             "autoplayButtonOutput" false
-             "responsive" {"0" {"items" 1}
-                           "500" {"items" 2}
-                           "768" {"items" 3}
-                           "992" {"items" 3
-                                  "gutter" 30}}})))
 
 (defn panel [navbar]
   (let [products (re-frame/subscribe [:products])]
@@ -66,31 +48,60 @@
                [:a.dropdown-item
                 {:href "#"}
                 "Services"]]]]]]]]]
-       [:div.container.mt-lg-n10.bg-light.box-shadow-lg.rounded-lg.overflow-hidden
-        [:div.row
-         [static-sidebar
-          [{:name  "Something"
-            :items [{:name   "Hello World"
-                     :icon   "czi-home"
-                     :href   "#"
-                     :active true}
-                    {:name "Hello to you too"
-                     :href "#"}]}]]
-         [:section.position-relative.pt-3.pt-lg-0.pb-5.mt-2.col-lg-8
-          [:div.px-lg-2.border-0.product-card-alt
-           [:div.px-4.pt-5.pb-4
-            [:h2.h3.text-center "What's selling"]
 
-            ;; Carousel
-            [:div.cz-carousel.cz-dots-enabled
-             [:div.cz-carousel-inner
-              {:ref (fn [el]
-                      (when el
-                        (js/tns (carousel-options el))))}
-              (doall
-               (for [prod (take 5 @products)]
-                 ^{:key prod} [featured-product prod]))]]]]]]
+       [:section.container.position-relative.pt-3.pt-lg-0.pb-5.mt-lg-n10
+        [:div.px-lg-2.border-0.box-shadow.card
+         [:div.px-4.pt-5.pb-4.card-body
+          [:h2.h3.text-center "What's selling"]
 
-        [:div.row [:h1.offset-lg-4 "Hello wolrd!"]]]])))
+          ;; Carousel
+          [product-carousel @products]]]]
 
+       ;; Recent products by category
+       [:section.container.pb-5.mb-lg-3
+        ;; Heading
+        [:div.d-flex.flex-wrap.justify-content-between.align-items-center.pt-1.border-bottom.pb-4.mb-4
+         [:h2.h3.mb-0.pt-3.mr-2
+          "Just came in"]
+         [:div.pt-3
+          [:select.custom-select
+           [:option
+            "All categories"]
+           [:option
+            "Products"]
+           [:option
+            "Services"]]]]
 
+        [:div.row.pt-2.mx-n2
+         [catalog/product-grid
+          {:product-type  :product-card
+           :product-class ["mb-grid-gutter"]
+           :grid-class    ["pt-2"]}
+          @products]]]
+
+       [:section.border-top.py-5
+        [:div.container.py-lg-2
+         [:h2.h3.mb-3.pb-3.pb-lg-4.text-center
+          "Seller of the month"]
+
+         [:div.row
+          [:div.col-lg-4.text-center.text-lg-left.pb-3.pt-lg-2
+           ;; Vendor
+           [:div.d-inline-block.text-left
+            [:div.media.media-ie-fix.align-items-center.pb-3
+             [:div.img-thumbnail.rounded-circle.positive-relative
+              {:style {:width "6.375rem"}}
+
+              [:img.rounded-circle {:src "https://via.placeholder.com/180?text=Seller"}]]
+             [:div.media-body.pl-3
+              [:h3.font-size-lg.mb-0
+               "Seller Name"]
+              [:span.d-block.text-muted.font-size-ms.pt-1.pb-2
+               "Member since November 2020"]
+              [:a.btn.btn-primary.btn-sm
+               "View products"]]]]]
+          ;; Vendor products/services
+          [:div.col-lg-8
+           [product-carousel (take 3 @products)]]]]]
+
+       ])))
