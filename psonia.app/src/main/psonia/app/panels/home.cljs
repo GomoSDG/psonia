@@ -77,7 +77,11 @@
           {:product-type  :product-card
            :product-class ["mb-grid-gutter"]
            :grid-class    ["pt-2"]}
-          @products]]]
+          (take 8(cycle @products))]]
+        [:div.text-center
+         [:a.btn.btn-outline-accent
+          "View more"
+          [:i.czi-arrow-right.font-size-ms.ml-1]]]]
 
        [:section.border-top.py-5
         [:div.container.py-lg-2
