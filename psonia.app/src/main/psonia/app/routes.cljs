@@ -9,24 +9,57 @@
               [psonia.app.panels.product.core :as product]
               [psonia.app.panels.admin.vendors.core :as vendors]))
 
-(def routes ["/"
-             [""
+(def routes [""
+             ["/"
               {:name :app/home
                :view #'home/panel}]
-             ["products"
-              {:name :app/products
-               :view #'catalog/panel}]
-             ["product/:id"
-              {:name :app.products/view
-               :view #'product/panel}]
-             ["admin/"
-              ["vendors"
-               {:name :app.admin/vendors
-                :view #'vendors/list-all}]
-              ["vendors/"
-               [":id/view"
+             ;; products
+             ["/products"
+              [""
+               {:name :app/products
+                :view #'catalog/panel}]
+              ["/:id"
+               {:name :app.products/view
+                :view #'product/panel}]]
+
+             ;; admin
+             ["/admin"
+              ;; admin vendors
+              ["/vendors"
+               [""
+                {:name :app.admin.vendors/list
+                 :view #'vendors/list-all}]
+               ["/:vendor-id"
                 {:name :app.admin.vendors/view
-                 :view #'vendors/vendor-view}]]]])
+                 :view #'vendors/vendor-view}]
+               ["/vendor-id/products"
+                {:name :app.admin.vendors/products}]
+
+               ;; admin products
+               ]]
+
+             ;; users
+             ["/users"
+              ["/login"
+               {:name :app.users/login}]
+              ["/onboarding"
+               {:name :app.users/onboarding}]
+              ["/profile"]]
+
+             ;; cart
+             ["cart"
+              [""
+               {:name :app.cart/view}]]
+
+             ;; checkout
+             ["/checkout"
+              {:name :app.cart/checkout}]
+
+             ;; orders
+             ["/orders"]
+
+             ;; wishlist
+             ["/wishlist"]])
 
 (defn router-component [{:keys [router]}]
   (let [current-route @(re-frame/subscribe [:routes/current-route])]

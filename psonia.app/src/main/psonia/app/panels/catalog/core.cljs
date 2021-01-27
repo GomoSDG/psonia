@@ -11,6 +11,7 @@
                   :icon :home}])
 
 (defn panel [navbar]
+  (js/console.log "Running products")
   (let [products (re-frame/subscribe [:products])]
     (fn []
       [:<>

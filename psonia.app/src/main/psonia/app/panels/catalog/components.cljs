@@ -1,7 +1,10 @@
 (ns psonia.app.panels.catalog.components
   (:require [goog.string :as gstring]
             ["drift-zoom" :default Drift]
+            ["jquery" :as $]
+            [re-frame.core :as re-frame]
             [psonia.app.urls :refer [resolve-href]]
+            [psonia.app.panels.cart.components :refer [add-to-cart-btn]]
             [goog.string.format]))
 
 ;; Define feature types and customize
@@ -41,15 +44,10 @@
 (defn- actions [product]
   [:div.card-body.card-body-hidden
    [:div.text-center.pb-2
-    [:select.custom-select.custom-select-sm.mr-2
-     [:option "XS"]
-     [:option "S"]
-     [:option "M"]
-     [:option "L"]
-     [:option "XL"]]]
-   [:button.btn.btn-primary.btn-sm
-    {:type "button"}
-    [:i.czi-cart.font-size-sm.mr-1] "Add to Cart"]])
+    [add-to-cart-btn
+     {:button-classes ["btn-shadow" "btn-block"]
+      :qty-position :top}
+     product]]])
 
 (defn- rating [val]
   [:div.star-rating
@@ -58,7 +56,7 @@
    (for [no-star (range (- 6 val))]
      ^{:key no-star} [:i.sr-star.czi-star])])
 
-(defn- product-details [{:keys [name price original-price avg-rating]}]
+(defn- product-info [{:keys [name price original-price avg-rating] :as args}]
   [:div.card-body.py-2
    [:a.product-meta.d-block.font-size-xs.pb-1
     {:href "#"}
@@ -82,9 +80,12 @@
        [:button.btn-wishlist.btn-sm {:type "button"}
         [:i.czi-heart]]
        [:div.product-card-actions
-        [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2 {:href (resolve-href :app.products/view {:id 1} {})}
+        [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2
+         {:href (resolve-href :app.products/view {:id 1} {})}
          [:i.czi-eye]]
-        [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2 {:href "#"}
+        [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2
+         {:href "#"
+          :on-click #(re-frame/dispatch [:app.cart/add-to-cart 1 product])}
          [:i.czi-cart]]]
        [:a.product-thumb-overlay]
        [:img {:alt "Product", :src "https://via.placeholder.com/550x370"}]]
@@ -114,17 +115,18 @@
   ([product]
    (product-card {} product)))
 
-(defn product [product]
-  (let [{:keys [id on-promotion image-b64]} product]
-    [:div.card.product-card
-     (when on-promotion
-       [:span.badge.badge-danger.badge-shadow "Sale"])
-     [:a.card-img-top.d-block.overflow-hidden
-      {:href "#"}
-      [:img {:alt "Product", :src "https://via.placeholder.com/500"}]]
-     [product-details product]
-     [actions product]
-     [:hr.d-sm-none]]))
+(defn product
+  ([options product]
+   (let [{:keys [id on-promotion image-b64]} product]
+     [:div.card.product-card
+      (when on-promotion
+        [:span.badge.badge-danger.badge-shadow "Sale"])
+      [:a.card-img-top.d-block.overflow-hidden
+       {:href (resolve-href :app.products/view {:id 1} {})}
+       [:img {:alt "Product", :src "https://via.placeholder.com/500"}]]
+      [product-info product]
+      [actions product]
+      [:hr.d-sm-none]])))
 
 (defn toolbox []
   [:div.d-flex.justify-content-center.justify-content-sm-between.align-items-center.pt-2.pb-4.pb-sm-5
@@ -199,7 +201,6 @@
 
   ;; With options
   ([options products]
-
    (let [opts (merge
                {:product-type  :product
                 :product-class []
@@ -208,7 +209,7 @@
      [:div.row.pt-3.mx-n2
       {:class (:grid-class opts)}
       (for [prod products]
-        ^{:key prod}
+        ^{:key (hash prod)}
 
         [:div.col-lg-3.col-md-4.col-sm-6.px-2 {:class (:product-class options)}
          (case (:product-type opts)
@@ -223,7 +224,10 @@
 (defn product-grid-with-toolbox [products]
   [:section.col-lg-8
    [toolbox]
-   [product-grid products]])
+   [product-grid {:product-type  :product
+                  :product-class ["mb-grid-gutter"]
+                  :grid-class    ["pt-2"]}
+    products]])
 
 (defn category-banner
   "Display a banner for categories. Products are shown in a carousel"
@@ -285,7 +289,6 @@
 (defn init-zoom-pane
   "Initiates zoom pane to allow for zooming of images."
   [el]
-  (js/console.log Drift)
   (Drift. el, #js {"paneContainer" (-> (.-parentElement el)
                                        (.querySelector ".cz-image-zoom-pane"))}))
 
@@ -354,3 +357,78 @@
        [:img {:src "https://via.placeholder.com/500"}]]
       [:a.cz-thumblist-item {:href "#third"}
        [:img {:src "https://via.placeholder.com/500"}]]]]))
+
+(defn product-details
+  "Shows the details of a product in a product page."
+  [product]
+  (fn [product]
+    ;; reviews and wishlist
+    [:div.product-details.ml-auto.pb-3
+     ;; review section
+     [:div.d-flex.justify-content-between.align-items-center.mb-2.review-details
+      [:a
+       {:href "#reviews"}
+       [rating (:avg-rating product)]
+       [:span.d-inline-block.font-size-sm.text-body.align-middle.mt-1.ml-1
+        "74 Reviews"]]
+
+      ;; Wishlist button
+      [:button.btn-wishlist.mr-0.mr-lg-3
+       {:type "button"
+        :ref #(.tooltip  ($ %))
+        :data-toggle "tooltip"
+        :title ""
+        :data-original-title "Add to wishlist"}
+       [:i.czi-heart]]]
+
+     ;; Price details
+     [:div.mb-3.price-details
+      ;; current price
+      [:span.h3.font-weight-normal.text-accent.mr-1
+       (:price product)]
+      ;; original price
+      [:del.text-muted.font-size-lg.mr-3
+       (:original-price product)]
+      ;; sale badge
+      (when (:on-promotion product)
+        [:span.badge.badge-danger.badge-shadow.align-middle.mt-n2
+         "Sale"])]
+
+     ;; Availability
+     [:div.position-relative.mr-n4.mb-3
+      [:div.mb-2.d-inline-block]
+      [:div.product-badge.product-available.mt-n1
+       [:i.czi-security-check]
+       "Product Available"]]
+
+     ;; add to cart
+     [:div.mb-grid-gutter
+       [add-to-cart-btn
+        {:button-classes ["btn-shadow" "btn-block"]}
+        product]]
+
+     ;; Product info
+     [:div#mb-4
+      {:ref #(.collapse ($ %))}
+      [:div.card
+       [:div.card-header
+         [:a.h6
+          {:href "#productDescription"
+           :role "button"
+           :data-toggle "collapse"}
+          [:i.czi-announcement.text-muted.font-size-lg.align-middle.mt-n1.mr-2]
+          "Product Description"
+          [:span.accordion-indicator]]]
+       [:div.card-body
+        [:h6.font-size-sm.mb-2
+         "Some heading"]
+        [:ul.font-size-sm.pl-4
+         [:li "point 1"]
+         [:li "point 2"]
+         [:li "point 4"]]
+        [:h6.font-size-sm.mb-2
+         "Some second heading"]
+        [:ul.font-size-sm.pl-4
+         [:li "point 1"]
+         [:li "point 2"]
+         [:li "point 4"]]]]]]))

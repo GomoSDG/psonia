@@ -1,23 +1,75 @@
 (ns psonia.app.panels.components
   (:require [psonia.app.layouts.site :as site]
             [reagent.ratom :as ratom]
+            [psonia.app.urls :refer [resolve-href]]
             [jquery :as $ ]))
 
 (defn multi-level-navbar []
   [:header.box-shadow-sm
-   [:div.navbar-sticky.bg-light
-    [:div.navbar.navbar-expand-lg.navbar-light
-     [:div.container
-      [site/brand "Super Street Market"]
-      [:div.input-group-overlay.d-none.d-lg-flex.mx-4
-       [:input.form-control.appended-form-control
-        {:placeholder "Search for products", :type "text"}]
-       [:div.input-group-append-overlay
-        [:span.input-group-text [:i.czi-search]]]]]]
+   ;; Top layer can be added here.
 
-    [:div.navbar.navbar-expand-lg.navbar-light.navbar-stuck-menu.mt-n2.pt0.pb-2
-     [:div.container
-      ]]]])
+   ;; Search and Login Layer
+   [:div.navbar.navbar-expand-lg.navbar-light.bg-light
+    [:div.container
+     [site/brand "Super Street Market"]
+     ;; Search widget
+     [:div.input-group-overlay.d-none.d-lg-flex.mx-4
+      [:input.form-control.appended-form-control
+       {:placeholder "Search for products", :type "text"}]
+      [:div.input-group-append-overlay
+       [:span.input-group-text [:i.czi-search]]]]
+
+     ;; navbar toolbar widget
+     [:div.navbar-toolbar.d-flex.align-items-center
+      ;; collapse button
+      [:button.navbar-toggler
+       {:type "button"
+        :data-toggle "collapse"
+        :data-target "#navbarCollapse"}
+       [:span.navbar-toggler-icon]]
+
+      ;; search button (Catalog)
+      [:a.navbar-tool.d-lg-none
+       {:href "#"}
+       [:div.navbar-icon-box
+        [:i.navbar-tool-icon.czi-search]]]
+
+      ;; Profile Button (User)
+      [:a.navbar-tool.ml-1.ml-lg-0.mr-n1.mr-lg-2
+       {:href "#"}
+       [:div.navbar-tool-icon-box
+        [:i.navbar-tool-icon.czi-user]]
+       [:div.navbar-tool-text.ml-2
+        [:small "Hello, Sign in"]
+        "My Account"]]
+
+      ;; Cart Button (Cart)
+      [:a.navbar-tool.ml-3
+       {:href "#"}
+       [:div.navbar-tool-icon-box.bg-secondary
+        [:span.navbar-tool-label "4"]
+        [:i.navbar-tool-icon.czi-cart]]
+       [:div.navbar-tool-text
+        [:small "My Cart"]
+        "R265.00"]]]]]
+
+   ;; Second layer
+   [:div.navbar.navbar-expand-lg.navbar-light.bg-light.mt-n2.pt-0.pb-2
+    [:div.container
+     [:hr.d-lg-none.mt-3.mb-2]
+     [:div#navbarCollapse.collapse.navbar-collapse[:ul.navbar-nav
+      [:li.nav-item
+       [:a.nav-link
+        {:href (resolve-href :app/home {:id 1} {})}
+        "Home"]]
+      [:li.nav-item
+       [:a.nav-link
+        {:href "#"}
+        "Services"]]
+      [:li.nav-item
+       [:a.nav-link
+        {:href "#"}
+        "Products"]]]]]]])
 
 ;; Sidebar
 

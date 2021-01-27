@@ -77,7 +77,7 @@
           {:product-type  :product-card
            :product-class ["mb-grid-gutter"]
            :grid-class    ["pt-2"]}
-          (take 8(cycle @products))]]
+          (take 8 (cycle @products))]]
         [:div.text-center
          [:a.btn.btn-outline-accent
           "View more"
