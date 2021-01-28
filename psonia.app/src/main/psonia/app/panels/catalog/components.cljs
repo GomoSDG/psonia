@@ -95,7 +95,7 @@
       [:div.text-muted.font-size-xs.mr-1
        "by "
        [:a.product-meta.font-weight-medium {:href "#"}
-        "Vendor Name" "Testing"]
+        "Vendor Name"]
        " in "
        [:a.product-meta.font-weight-medium {:href "#"}
         "Services"]]
