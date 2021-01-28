@@ -5,6 +5,7 @@
             [re-frame.core :as re-frame]
             [psonia.app.urls :refer [resolve-href]]
             [psonia.app.panels.cart.components :refer [add-to-cart-btn]]
+            [psonia.app.money :refer [money]]
             [goog.string.format]))
 
 ;; Define feature types and customize
@@ -68,49 +69,49 @@
    [:div.d-flex.justify-content-between
     [:div.product-price
      [:span.text-accent
-      "R" (gstring/format "%.2f" price)]
+      [money price]]
      (when original-price
-       [:del.font-size-sm.text-muted "R" (gstring/format "%.2f" original-price)])]]])
+       [:del.font-size-sm.text-muted
+        [money original-price]])]]])
 
 (defn product-card
   ([options product]
-   (fn [options product]
-     [:div.card.product-card-alt
-      [:div.product-thumb
-       [:button.btn-wishlist.btn-sm {:type "button"}
-        [:i.czi-heart]]
-       [:div.product-card-actions
-        [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2
-         {:href (resolve-href :app.products/view {:id 1} {})}
-         [:i.czi-eye]]
-        [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2
-         {:href "#"
-          :on-click #(re-frame/dispatch [:app.cart/add-to-cart 1 product])}
-         [:i.czi-cart]]]
-       [:a.product-thumb-overlay]
-       [:img {:alt "Product", :src "https://via.placeholder.com/550x370"}]]
-      [:div.card-body
-       [:div.d-flex.flex-wrap.justify-content-between.align-items-start.pb-2
-        [:div.text-muted.font-size-xs.mr-1
-         "by "
-         [:a.product-meta.font-weight-medium {:href "#"}
-          "Vendor Name"]
-         " in "
-         [:a.product-meta.font-weight-medium {:href "#"}
-          "Services"]]
-        [:div.star-rating
-         [rating (:avg-rating product)]]]
-       [:h3.product-title.font-size-sm.mb-2
-        [:a {:href "#"}
-         (:name product)]]
-       [:div.d-flex.flex-wrap.justify-content-between.align-items-center
-        [:div.font-size-sm.mr-2
-         [:i.czi-money-bag
-          "500"
-          [:span.font-size-xs.ml-1
-           "Sales"]]]
-        [:div.bg-faded-accent.text-accent.rounded-sm.py-1.px-2
-         (str "R"(:price product))]]]]))
+   [:div.card.product-card-alt
+    [:div.product-thumb
+     [:button.btn-wishlist.btn-sm {:type "button"}
+      [:i.czi-heart]]
+     [:div.product-card-actions
+      [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2
+       {:href (resolve-href :app.products/view {:id 1} {})}
+       [:i.czi-eye]]
+      [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2
+       {:href "#"
+        :on-click #(re-frame/dispatch [:app.cart/add-to-cart 1 product])}
+       [:i.czi-cart]]]
+     [:a.product-thumb-overlay]
+     [:img {:alt "Product", :src "https://via.placeholder.com/550x370"}]]
+    [:div.card-body
+     [:div.d-flex.flex-wrap.justify-content-between.align-items-start.pb-2
+      [:div.text-muted.font-size-xs.mr-1
+       "by "
+       [:a.product-meta.font-weight-medium {:href "#"}
+        "Vendor Name" "Testing"]
+       " in "
+       [:a.product-meta.font-weight-medium {:href "#"}
+        "Services"]]
+      [:div.star-rating
+       [rating (:avg-rating product)]]]
+     [:h3.product-title.font-size-sm.mb-2
+      [:a {:href "#"}
+       (:name product)]]
+     [:div.d-flex.flex-wrap.justify-content-between.align-items-center
+      [:div.font-size-sm.mr-2
+       [:i.czi-money-bag
+        "500"
+        [:span.font-size-xs.ml-1
+         "Sales"]]]
+      [:div.bg-faded-accent.text-accent.rounded-sm.py-1.px-2
+       [money (:price product)]]]]])
 
   ([product]
    (product-card {} product)))
@@ -183,6 +184,7 @@
 (defn product-carousel
   ""
   [products]
+  (js/console.log "Prices" (map :price products))
   (fn []
     [:div.cz-carousel.cz-dots-enabled
      [:div.cz-carousel-inner
@@ -192,7 +194,9 @@
       (doall
        (for [prod products]
          ^{:key prod}
-         [product-card prod]))]]))
+         (do
+           (js/console.log prod)
+           [product-card prod])))]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; PRODUCT GRID
 
@@ -361,6 +365,7 @@
 (defn product-details
   "Shows the details of a product in a product page."
   [product]
+  (js/console.log (:price product) (:original-price product))
   (fn [product]
     ;; reviews and wishlist
     [:div.product-details.ml-auto.pb-3
@@ -385,10 +390,11 @@
      [:div.mb-3.price-details
       ;; current price
       [:span.h3.font-weight-normal.text-accent.mr-1
-       (:price product)]
+       [money (:price product)]]
       ;; original price
-      [:del.text-muted.font-size-lg.mr-3
-       (:original-price product)]
+      (when (:on-promotion product)
+        [:del.text-muted.font-size-lg.mr-3
+         [money (:original-price product)]])
       ;; sale badge
       (when (:on-promotion product)
         [:span.badge.badge-danger.badge-shadow.align-middle.mt-n2
