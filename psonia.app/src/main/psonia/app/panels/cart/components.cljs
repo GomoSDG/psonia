@@ -29,17 +29,18 @@
         [:div
          {:class (case (:qty-position options)
                    :top ["col-12"]
-                   :side ["col-3"]
-                   ["col-3"])}
+                   :side ["col-sm-12" "col-md-3"]
+                   ["col-sm-12" "col-md-3"])}
          [quantity
           {:type (:quantity product)
-           :end  5}
+           :end  5
+           :on-change update-value}
           qty]]
         [:div
          {:class (case (:qty-position options)
                    :top ["col-12"]
-                   :side ["col-9"]
-                   ["col-9"])}
+                   :side ["col-sm-12" "col-md-9"]
+                   ["col-sm-12" "col-md-9"])}
          [:button.btn.btn-primary.btn-sm.mt-1
           {:class (or (:button-classes options) [])
            :on-click #(re-frame/dispatch [:psonia.cart/add-to-cart @qty product])}

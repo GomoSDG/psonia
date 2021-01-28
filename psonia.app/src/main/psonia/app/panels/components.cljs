@@ -10,7 +10,6 @@
   (let [items-in-cart    (re-frame/subscribe [:psonia.cart/item-count])
         cart-total-price (re-frame/subscribe [:psonia.cart/total-price])]
     (fn []
-      (js/console.log "CART PRICE" @cart-total-price)
       [:header.box-shadow-sm
        ;; Top layer can be added here.
 
@@ -51,13 +50,14 @@
 
           ;; Cart Button (Cart)
           [:a.navbar-tool.ml-3
-           {:href "#"}
+           {:href (resolve-href :psonia.cart/view {} {})}
            [:div.navbar-tool-icon-box.bg-secondary
             (when-not (zero? @items-in-cart)
                 [:span.navbar-tool-label (str @items-in-cart)])
             [:i.navbar-tool-icon.czi-cart]]
            [:div.navbar-tool-text
             [:small "My Cart"]
+            (str )
             [money @cart-total-price]]]]]]
 
        ;; Second layer

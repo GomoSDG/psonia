@@ -11,7 +11,7 @@
    (let [cart (:psonia/cart db)
          cart-entry {:price (product :price)
                      :qty   qty}
-         updated-cart (assoc cart (product :id) qty)]
+         updated-cart (assoc cart (product :id) cart-entry)]
      ;; TODO: store cart in app storage
      (assoc db :psonia/cart updated-cart))))
 
@@ -23,6 +23,8 @@
 (reg-sub
  :psonia.cart/total-price
  (fn [db]
-   (let [products (map :price (db :psonia/cart))
-         price    (reduce + products)]
-     price)))
+   (let [products (map #(* (:price %)
+                           (:qty %))
+                       (-> (db :psonia/cart)
+                           vals))]
+     (apply + products))))

@@ -5,8 +5,8 @@
               [reitit.frontend.controllers :as rfc]
               [reitit.coercion.spec :as rss]
               [psonia.app.panels.catalog.core :as catalog]
+              [psonia.app.panels.cart.core :as cart]
               [psonia.app.panels.home :as home]
-              [psonia.app.panels.product.core :as product]
               [psonia.app.panels.admin.routes :as admin]))
 
 (def routes [""
@@ -25,9 +25,7 @@
               ["/profile"]]
 
              ;; cart
-             ["cart"
-              [""
-               {:name :app.cart/view}]]
+             cart/routes
 
              ;; checkout
              ["/checkout"

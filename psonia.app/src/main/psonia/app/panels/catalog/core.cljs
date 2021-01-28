@@ -12,7 +12,6 @@
                   :icon :home}])
 
 (defn list-all [navbar]
-  (js/console.log "Running products")
   (let [products (re-frame/subscribe [:products])]
     (fn []
       [:<>
@@ -33,7 +32,6 @@
 (defn view-product
   "Uses light gallery to create a product gallery."
   [params]
-  (js/console.log "Args!" (clj->js params))
   (let [product (first @(re-frame/subscribe [:products]))]
     [:<>
      [multi-level-navbar]

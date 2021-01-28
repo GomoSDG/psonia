@@ -25,4 +25,4 @@
           r (->> (.dollars m)
                 (.toString)
                 (.format nff))]
-      [:<> "R" r "." [:small c]]))
+      [:span "R" r "." [:small c]]))
