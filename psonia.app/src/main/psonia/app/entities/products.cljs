@@ -6,8 +6,8 @@
 
 (s/def ::category #{"Home" "Clothing"})
 
-(s/def ::price (s/and float? pos?))
-(s/def ::original-price (s/and float? pos?))
+(s/def ::price (s/and int? #(> % 1000000)))
+(s/def ::original-price (s/and int? #(> % 10000)))
 (s/def ::name (s/and string? #(<= (count %) 50) #(> (count %) 10)))
 (s/def ::on-promotion boolean?)
 (s/def ::avg-rating (s/and int? #(<= 1 % 5)))

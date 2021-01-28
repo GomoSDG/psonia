@@ -75,6 +75,17 @@
                              [vendor-fica-documents-tab {:id "fica-documents"}
                               vendor])]]]]]]]]))))
 
+(def routes
+  ["/vendors"
+   [""
+    {:name :app.admin.vendors/list
+     :view #'list-all}]
+   ["/:vendor-id"
+    {:name :app.admin.vendors/view
+     :view #'vendor-view}]
+   ["/vendor-id/products"
+    {:name :app.admin.vendors/products}]])
+
 (re-frame/reg-sub
  :vendors
  (fn [db]

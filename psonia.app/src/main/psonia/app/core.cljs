@@ -2,7 +2,6 @@
     (:require [reagent.core :as r]
               [reagent.dom :as rdom]
               [psonia.app.layouts.site :refer [site-layout]]
-              [psonia.app.views :as views]
               [psonia.app.routes :refer [init-routes! router-component] :as routes]
               [re-frame.core :as re-frame]
               [cljs.spec.gen.alpha :as gen]
@@ -16,7 +15,6 @@
  :initialize-db
  (fn [_ _]
    {:active-panel :home
-    :panels views/panels
     :products (clojure.set/index (gen/sample (s/gen ::products/spec) 5) [:id])
     :vendors (clojure.set/index (gen/sample (s/gen ::vendors/spec) 5) [:id])}))
 

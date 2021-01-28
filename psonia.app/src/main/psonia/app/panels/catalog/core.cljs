@@ -4,13 +4,14 @@
             [re-frame.core :as re-frame]
             [reagent.ratom :as ratom]
             [psonia.app.panels.categories.components :refer [categories-widget]]
-            [psonia.app.panels.components :refer [multi-level-navbar]]))
+            [psonia.app.panels.components :refer [multi-level-navbar]]
+            [psonia.app.panels.catalog.components :refer [product-gallery product-details]]))
 
 (def breadcrumb [{:name "Home"
                   :url  "#"
                   :icon :home}])
 
-(defn panel [navbar]
+(defn list-all [navbar]
   (js/console.log "Running products")
   (let [products (re-frame/subscribe [:products])]
     (fn []
@@ -28,3 +29,31 @@
  :products
  (fn [db]
    (mapcat identity (vals (:products db)))))
+
+(defn view-product
+  "Uses light gallery to create a product gallery."
+  [params]
+  (js/console.log "Args!" (clj->js params))
+  (let [product (first @(re-frame/subscribe [:products]))]
+    [:<>
+     [multi-level-navbar]
+     [site/page-title (:name product)]
+     [:div.container
+      [:div.bg-light.box-shadow-lg.rounded-lg.px-4.py-3.mb-5
+       [:div.px-lg
+        [:div.row
+         [:div.col-lg-7.pr-lg-0.pt-lg-4
+          ;; Product Gallery
+          [product-gallery ""]]
+         [:div.col-lg-5.pt-4.pt-lg-0
+          ;; Product Details
+          [product-details product]]]]]]]))
+
+(def routes
+  ["/products"
+   [""
+    {:name :app/products
+     :view #'list-all}]
+   ["/:id"
+    {:name :app.products/view
+     :view #'view-product}]])
