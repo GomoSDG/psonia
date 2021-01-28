@@ -82,7 +82,7 @@
       [:i.czi-heart]]
      [:div.product-card-actions
       [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2
-       {:href (resolve-href :app.products/view {:id 1} {})}
+       {:href (resolve-href :app.products/view {:id (:id product)} {})}
        [:i.czi-eye]]
       [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2
        {:href "#"
@@ -184,7 +184,6 @@
 (defn product-carousel
   ""
   [products]
-  (js/console.log "Prices" (map :price products))
   (fn []
     [:div.cz-carousel.cz-dots-enabled
      [:div.cz-carousel-inner
@@ -194,9 +193,7 @@
       (doall
        (for [prod products]
          ^{:key prod}
-         (do
-           (js/console.log prod)
-           [product-card prod])))]]))
+         [product-card prod]))]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; PRODUCT GRID
 
@@ -365,7 +362,6 @@
 (defn product-details
   "Shows the details of a product in a product page."
   [product]
-  (js/console.log (:price product) (:original-price product))
   (fn [product]
     ;; reviews and wishlist
     [:div.product-details.ml-auto.pb-3

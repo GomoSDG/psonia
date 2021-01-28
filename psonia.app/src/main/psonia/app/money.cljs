@@ -1,5 +1,12 @@
 (ns psonia.app.money
-  (:require ["currency.js" :as currency]))
+  (:import
+   (goog.i18n NumberFormat)
+   (goog.i18n.NumberFormat Format))
+  (:require ["currency.js" :as currency]
+            [goog.i18n.NumberFormat.Format]))
+
+(def nff
+  (NumberFormat. Format/DECIMAL))
 
 (defn cents->money
   [cents]
@@ -8,23 +15,14 @@
                            "symbol" "R"})
       (.format)))
 
-(defn del-money
-  [cents]
-  )
-
 (defn money
   [cents]
-  (js/console.log )
     (let [m (currency cents #js {"fromCents" true
                                  "separator" ","})
           c (-> (.cents m)
                 (.toString)
                 (.padEnd 2 "0"))
-          r (-> (.dollars m)
-                (.toString))]
-      [:<>
-       "R"
-       (->> (partition 3 r)
-            (map #(apply str %))
-            (clojure.string/join ","))
-       "." [:small c]]))
+          r (->> (.dollars m)
+                (.toString)
+                (.format nff))]
+      [:<> "R" r "." [:small c]]))

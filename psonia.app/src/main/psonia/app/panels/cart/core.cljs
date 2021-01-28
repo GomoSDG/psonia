@@ -1,2 +1,3 @@
-(ns psonia.app.panels.cart.core)
+(ns psonia.app.panels.cart.core
+  [re-frame.core :as re-frame])
 
