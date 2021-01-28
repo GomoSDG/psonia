@@ -25,5 +25,4 @@
  (fn [db]
    (let [products (map :price (db :psonia/cart))
          price    (reduce + products)]
-     (js/console.log "THE PRICE" price products)
      price)))
