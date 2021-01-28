@@ -1,6 +1,7 @@
 (ns psonia.app.panels.catalog.core
   (:require [psonia.app.panels.catalog.components :as comp-catalog]
             [psonia.app.layouts.site :as site]
+            [psonia.app.panels.catalog.data :as data]
             [re-frame.core :as re-frame]
             [reagent.ratom :as ratom]
             [psonia.app.panels.categories.components :refer [categories-widget]]
@@ -32,10 +33,10 @@
 (defn view-product
   "Uses light gallery to create a product gallery."
   [params]
-  (let [product (first @(re-frame/subscribe [:products]))]
+  (let [product (re-frame/subscribe [:psonia.catalog/product (params :id)])]
     [:<>
      [multi-level-navbar]
-     [site/page-title (:name product)]
+     [site/page-title (:name @product)]
      [:div.container
       [:div.bg-light.box-shadow-lg.rounded-lg.px-4.py-3.mb-5
        [:div.px-lg
@@ -45,7 +46,7 @@
           [product-gallery ""]]
          [:div.col-lg-5.pt-4.pt-lg-0
           ;; Product Details
-          [product-details product]]]]]]]))
+          [product-details @product]]]]]]]))
 
 (def routes
   ["/products"

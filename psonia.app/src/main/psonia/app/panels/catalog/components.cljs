@@ -102,7 +102,7 @@
       [:div.star-rating
        [rating (:avg-rating product)]]]
      [:h3.product-title.font-size-sm.mb-2
-      [:a {:href "#"}
+      [:a {:href (resolve-href :app.products/view {:id (:id product)} {})}
        (:name product)]]
      [:div.d-flex.flex-wrap.justify-content-between.align-items-center
       [:div.font-size-sm.mr-2
@@ -123,7 +123,7 @@
       (when on-promotion
         [:span.badge.badge-danger.badge-shadow "Sale"])
       [:a.card-img-top.d-block.overflow-hidden
-       {:href (resolve-href :app.products/view {:id 1} {})}
+       {:href (resolve-href :app.products/view {:id (product :id)} {})}
        [:img {:alt "Product", :src "https://via.placeholder.com/500"}]]
       [product-info product]
       [actions product]
