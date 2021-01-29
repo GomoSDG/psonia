@@ -19,7 +19,7 @@
                                                           :href "index.html"}
     body]
    [:a.navbar-brand.d-sm-none.mr-2.order-lg-1 {:style {:min-width "4.625rem"}
-                                               :href "index.html"}
+                                               :href "/"}
     body]])
 
 (defn navbar []
