@@ -20,7 +20,7 @@
              ["/users"
               ["/login"
                {:name :app.users/login}]
-              ["/onboarding"
+              ["/register"
                {:name :app.users/onboarding}]
               ["/profile"]]
 

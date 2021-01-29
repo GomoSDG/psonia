@@ -85,8 +85,7 @@
        {:href (resolve-href :app.products/view {:id (:id product)} {})}
        [:i.czi-eye]]
       [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2
-       {:href "#"
-        :on-click #(re-frame/dispatch [:app.cart/add-to-cart 1 product])}
+       {:on-click #(re-frame/dispatch [:psonia.cart/add-to-cart 1 product])}
        [:i.czi-cart]]]
      [:a.product-thumb-overlay]
      [:img {:alt "Product", :src "https://via.placeholder.com/550x370"}]]

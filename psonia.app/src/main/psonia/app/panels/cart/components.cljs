@@ -13,7 +13,8 @@
       [:select.custom-select.mr-3
        {:on-change #(on-change (-> (.-target %)
                                    (.-value)
-                                   int))}
+                                   int))
+        :value     (or (options :val) 1)}
        (for [o (range 1 (inc end))]
          ^{:key o}
          [:option {:value o}
@@ -50,7 +51,8 @@
 
 (defn product-quantity
   "Updates the amount of products that are in the cart."
-  [product]
+  [qty product]
   [quantity {:on-change #(re-frame/dispatch [:psonia.cart/update-product-qty % product])
              :end       5
+             :val       qty
              :type      (:quantity product)}])
