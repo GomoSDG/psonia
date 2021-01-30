@@ -1,8 +1,7 @@
 ;; shadow-cljs configuration
 {:source-paths
- ["src/dev"
-  "src/main"
-  "src/test"
+ ["src/cljs"
+  "src/cljc"
   "resources"]
 
  :dependencies
@@ -22,8 +21,8 @@
  {:app {:target     :browser
         :output-dir "resources/public/js"
         :asset-path "/js"
-        :modules    {:main {:entries [psonia.app.core]
-                            :init-fn psonia.app.core/init}}
+        :modules    {:main {:entries [psonia.core]
+                            :init-fn psonia.core/init}}
 
         :js-options {:resolve {"jquery" {:target :global
                                          :global "$"}}}
@@ -33,7 +32,7 @@
         :devtools {:repl-init-ns cljs.user
                    :http-port    8021
                    :http-root    "resources/public"
-                   :after-load   psonia.app.core/render-active-panel
+                   :after-load   psonia.core/render-active-panel
                    :autoreload   true
                    :preloads     [day8.re-frame-10x.preload]
                    :watch-dir    "resources/public"}}
@@ -41,8 +40,8 @@
   :prod {:target     :browser
          :output-dir "resources/public/js"
          :asset-path "/js"
-         :modules    {:main {:entries [psonia.app.core]
-                             :init-fn psonia.app.core/init}}
+         :modules    {:main {:entries [psonia.core]
+                             :init-fn psonia.core/init}}
 
          :js-options {:resolve {"jquery" {:target :global
                                           :global "$"}}}}}}
