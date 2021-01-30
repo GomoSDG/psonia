@@ -28,24 +28,29 @@
    (assoc-in db [:psonia/cart (product :id) :qty] qty)))
 
 (reg-event-db
- :psonia.cart/remove-item
- [re-frame/trim-v]
- (fn [db [product]]
-   (update db :psonia/cart dissoc (product :id) )))
+  :psonia.cart/remove-item
+  [re-frame/trim-v]
+  (fn [db [product]]
+    (update db :psonia/cart dissoc (product :id) )))
 
 (reg-sub
- :psonia.cart/item-count
- (fn [db]
-   (count (get db :psonia/cart))))
+  :psonia.cart/addresses
+  (fn [db]
+    (get db :psonia.cart/addresses)))
 
 (reg-sub
- :psonia.cart/total-price
- (fn [db]
-   (let [products (map #(* (:price %)
-                           (:qty %))
-                       (-> (db :psonia/cart)
-                           vals))]
-     (apply + products))))
+  :psonia.cart/item-count
+  (fn [db]
+    (count (get db :psonia/cart))))
+
+(reg-sub
+  :psonia.cart/sub-total
+  (fn [db]
+    (let [products (map #(* (:price %)
+                            (:qty %))
+                        (-> (db :psonia/cart)
+                            vals))]
+      (apply + products))))
 
 (reg-sub
  :psonia.cart/items

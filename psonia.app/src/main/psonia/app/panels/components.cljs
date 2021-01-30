@@ -4,11 +4,11 @@
             [re-frame.core :as re-frame]
             [psonia.app.money :refer [money]]
             [psonia.app.urls :refer [resolve-href]]
-            [jquery :as $ ]))
+            ["jquery" :as $]))
 
 (defn multi-level-navbar []
   (let [items-in-cart    (re-frame/subscribe [:psonia.cart/item-count])
-        cart-total-price (re-frame/subscribe [:psonia.cart/total-price])]
+        cart-total-price (re-frame/subscribe [:psonia.cart/sub-total])]
     (fn []
       [:header.box-shadow-sm
        ;; Top layer can be added here.
@@ -28,7 +28,7 @@
          [:div.navbar-toolbar.d-flex.align-items-center
           ;; collapse button
           [:button.navbar-toggler
-           {:type "button"
+           {:type        "button"
             :data-toggle "collapse"
             :data-target "#navbarCollapse"}
            [:span.navbar-toggler-icon]]
@@ -53,7 +53,7 @@
            {:href (resolve-href :psonia.cart/view {} {})}
            [:div.navbar-tool-icon-box.bg-secondary
             (when-not (zero? @items-in-cart)
-                [:span.navbar-tool-label (str @items-in-cart)])
+              [:span.navbar-tool-label (str @items-in-cart)])
             [:i.navbar-tool-icon.czi-cart]]
            [:div.navbar-tool-text
             [:small "My Cart"]

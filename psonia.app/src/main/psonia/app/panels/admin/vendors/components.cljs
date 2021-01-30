@@ -32,23 +32,23 @@
 
 (defn vendor-general-tab 
   ([options {:keys [name status active? contact-details] :as vendor}]
-   (let [image (ratom/atom "")
+   (let [image     (ratom/atom "")
          set-image #(reset! image %)]
      (fn [options vendor]
-       [:div.tab-pane.fade.active.show {:id (:id options)
-                           :role "tabpanel"}
-       [:div.bg-secondary.rounded-lg.p-4.mb-4
-        ;; Image selection
-        [:div.media.align-items-center
-         [:img {:alt  "Createx Studio",
-                :width "90",
-                :src (or @image)}]
-         [:div.media-body.pl-3
-          [cropper-widget {:id  "cropModal"
-                           :crop-fn set-image
-                           :src "/150.jpg"}]
-          [:div.p.mb-0.font-size-ms.text-muted
-           "Upload Vendor Image"]]]]
+       [:div.tab-pane.fade.active.show {:id   (:id options)
+                                        :role "tabpanel"}
+        [:div.bg-secondary.rounded-lg.p-4.mb-4
+         ;; Image selection
+         [:div.media.align-items-center
+          [:img {:alt   "Createx Studio",
+                 :width "90",
+                 :src   (or @image)}]
+          [:div.media-body.pl-3
+           [cropper-widget {:id      "cropModal"
+                            :crop-fn set-image
+                            :src     "/150.jpg"}]
+           [:div.p.mb-0.font-size-ms.text-muted
+            "Upload Vendor Image"]]]]
         ;; Form
         [:div.row
          [:div.col-sm-12
@@ -63,18 +63,18 @@
                [:div.form-group
                 [:label {:for "vendor-name"}
                  "Vendor Name"]
-                [:input#vendor-name.form-control {:type "text"
-                                                  :name "name"
-                                                  :value (values "name")
+                [:input#vendor-name.form-control {:type      "text"
+                                                  :name      "name"
+                                                  :value     (values "name")
                                                   :on-change handle-change
-                                                  :on-blur handle-blur}]]
+                                                  :on-blur   handle-blur}]]
                [:button.btn.btn-success.float-right
                 {:on-click handle-submit}
                 "Save Changes."]]])]
 
           ;; Contact Details
           [fork/form
-           {:initial-values contact-details
+           {:initial-values  contact-details
             :keywordize-keys true}
            (fn [{:keys [values handle-change handle-blur handle-submit]}]
              [:div.card.mt-3
@@ -83,19 +83,19 @@
                [:div.form-group
                 [:label {:for "cellphone-number"}
                  "Cellphone Number"]
-                [:input#cellphone-number.form-control {:type "text"
-                                                       :name :cellphone-number
-                                                       :value (values :cellphone-number)
+                [:input#cellphone-number.form-control {:type      "text"
+                                                       :name      :cellphone-number
+                                                       :value     (values :cellphone-number)
                                                        :on-change handle-change
-                                                       :on-blur handle-blur}]]
+                                                       :on-blur   handle-blur}]]
                [:div.form-group
                 [:label {:for "email"}
                  "E-mail"]
-                [:input#email.form-control {:type "text"
-                                                  :name :email
-                                                  :value (values :email)
-                                                  :on-change handle-change
-                                            :on-blur handle-blur}]]
+                [:input#email.form-control {:type      "text"
+                                            :name      :email
+                                            :value     (values :email)
+                                            :on-change handle-change
+                                            :on-blur   handle-blur}]]
                [:button.btn.btn-success.float-right
                 "Save Changes"]]])]
 
@@ -107,7 +107,7 @@
              [:label {:for "vendor-status"}
               "Status"]
              [:input#vendor-status.form-control {:readOnly true
-                                                 :value (:status-name status)}]]
+                                                 :value    (:status-name status)}]]
             [:div.form-group.float-right
              (when (:can-activate? status)
                [:button.btn.btn-shadow.btn-success
@@ -122,7 +122,7 @@
   ([options vendor]
    (let []
      (fn [options vendor]
-       [:div.tab-pane.fade.active.show {:id (:id options)
+       [:div.tab-pane.fade.active.show {:id   (:id options)
                                         :role "tabpanel"}
         ;; Form
         [:div.row
@@ -149,7 +149,7 @@
   ([option vendor]
    (let []
      (fn [options vendors]
-       [:div.tab-pane.fade.active.show {:id (:id options)
+       [:div.tab-pane.fade.active.show {:id   (:id options)
                                         :role "tabpanel"}
         ])))
   ([vendor]
