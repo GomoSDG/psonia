@@ -1,4 +1,0 @@
-* Introduction
-Service for managing users as admin. This will achieve things managing groups, merchants, and the like.
-
-* 
