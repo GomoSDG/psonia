@@ -7,7 +7,7 @@
                   :url  "#"
                   :icon :home}])
 
-(defn ^{:page-title "Hello"} panel []
+(defn ^{:page-title "Home"} panel []
   (let [products (re-frame/subscribe [:products])]
     (fn []
       [:<>
