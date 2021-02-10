@@ -4,9 +4,9 @@
             [psonia.routes :refer [init-routes! router-component] :as routes]
             [re-frame.core :as re-frame]
             [cljs.spec.gen.alpha :as gen]
-            [psonia.entities.products :as products]
-            [psonia.entities.vendors :as vendors]
-            [psonia.entities.address :as address]
+            [psonia.models.products :as products]
+            [psonia.models.vendors :as vendors]
+            [psonia.models.address]
             [cljs.spec.alpha :as s]
             [clojure.test.check]
             [clojure.test.check.properties]))
@@ -17,7 +17,7 @@
     {:active-panel          :home
      :products              (set/index (gen/sample (s/gen ::products/spec) 5) [:id])
      :vendors               (set/index (gen/sample (s/gen ::vendors/spec) 5) [:id])
-     :psonia.cart/addresses (set/index (gen/sample (s/gen ::address/spec) 3) [:id])}))
+     :psonia.cart/addresses (set/index (gen/sample (s/gen :psonia/address) 3) [:id])}))
 
 (defn render-active-panel []
   (re-frame/clear-subscription-cache!)

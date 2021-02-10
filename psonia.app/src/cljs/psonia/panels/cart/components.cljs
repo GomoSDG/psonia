@@ -1,8 +1,44 @@
 (ns psonia.panels.cart.components
   (:require [re-frame.core :as re-frame]
             [psonia.panels.cart.data]
+            [psonia.models.address :as address]
             [psonia.urls :refer [resolve-href]]
             [reagent.ratom :as ratom]))
+
+(defn address-selector
+  []
+  (let [addresses          (re-frame/subscribe [:psonia.cart/addresses])
+        current-address-id (re-frame/subscribe [:psonia.cart/current-address])
+        address-ids        (map (comp first vals) (keys @addresses))
+        indexed-addresses  (map vector address-ids (map first (vals @addresses)))]
+    (fn []
+      [:<>
+       [:h2.h6.pb-3.mb-2
+        "Choose shipping address"]
+       [:div.table-responsive
+        [:table.table.table-hover.font-size-sm.border-bottom
+         [:thead
+          [:tr
+           [:th.align-middle]
+           [:th.align-middle "Address"]]]
+         [:tbody
+          (doall
+            (for [[adr-id adr] indexed-addresses]
+              [:tr
+               [:td
+                [:div.custom-control.custom-radio.mb-4
+                 [:input.custom-control-input
+                  {:type      "radio"
+                   :id        (str adr-id)
+                   :name      "shipping-address"
+                   :checked   (= @current-address-id adr-id)
+                   :on-change #(when (-> (.-target %)
+                                         (.-checked))
+                                 (re-frame/dispatch [:psonia.cart/set-shipping-address adr-id]))}]
+                 [:label.custom-control-label
+                  {:for (str adr-id)}]]]
+               [:td
+                (address/->address-string adr)]]))]]]])))
 
 (def qty-units {:rate "hr"})
 
@@ -62,18 +98,18 @@
              :name "Cart"
              :icon "czi-cart"
              :view :psonia.cart/view}
-            {:id   :shipping
-             :name "Shipping"
+            {:id   :shipping-method
+             :name "Delivery"
              :icon "czi-package"
-             :view :psonia.cart/view}
-            {:id   :payment
+             :view :psonia.shipping.method/view}
+            {:id   :shipping-address
+             :name "Address"
+             :icon "czi-package"
+             :view :psonia.shipping.address/view}
+            {:id   :payment-method
              :name "Payment"
-             :icon "czi-card"
-             :view :psonia.cart/view}
-            {:id   :review
-             :name "Review"
-             :icon "czi-check-circle"
-             :view :psonia.cart/view}])
+             :icon "czi-money-bag"
+             :view :psonia.payment.method/view}])
 
 (defn step
   [{:keys [name icon count]}]
@@ -98,7 +134,8 @@
                        "active")
                      (when (= idx idx-current-step)
                        "current")]
-             :href  (resolve-href (s :view) {} {})}
+             :href  (when (<= idx idx-current-step)
+                      (resolve-href (s :view) {} {}))}
             [step {:name  (s :name)
                    :icon  (s :icon)
                    :count (inc idx)}]

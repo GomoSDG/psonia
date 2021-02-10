@@ -3,10 +3,13 @@
             [psonia.layouts.site :as site]
             [psonia.urls :refer [resolve-href]]
             [psonia.money :refer [money]]
+            [psonia.panels.cart.forms :as forms]
             [psonia.panels.components :refer [multi-level-navbar]]
-            [psonia.panels.cart.components :refer [product-quantity checkout-step-progress]]))
+            [psonia.panels.cart.components :refer [product-quantity
+                                                   checkout-step-progress
+                                                   address-selector]]))
 
-(defn view
+(defn ^{:page-title "Cart"} view
   "Views cart"
   []
   (let [items     (re-frame/subscribe [:psonia.cart/items])
@@ -29,7 +32,7 @@
              [:h2.h6.text-light.mb-0
               "Cart"]
              [:a.btn.btn-outline-primary.btn-sm.pl-2
-              {:href "#"}
+              {:href "/products"}
               [:i.czi-arrow-left.mr-2]
               "Continue shopping"]]
 
@@ -64,7 +67,7 @@
                     :on-click #(re-frame/dispatch [:psonia.cart/remove-item p])}
                    [:i.czi-close-circle.mr-2]
                    "Remove"]]]))]
-           ;; Sidebar
+           ;; Sidebar -- Order Summary
            [:aside.col-lg-4.pt-4.pt-lg-0
             [:div.cz-sidebar-static.rounded-lg.box-shadow-lg.ml-lg-auto
              [:div.text-center.mb-4.pb-3.border-bottom
@@ -72,15 +75,15 @@
               [:h3.h6.mb-3.pb-1
                [money @sub-total]]]
              [:a.btn.btn-primary.btn-shadow.btn-block.mt-4
+              {:href (resolve-href :psonia.shipping.method/view {} {})}
               [:i.czi-card.font-size-lg.mr-2]
               "Proceed to Checkout"]]]]]]))))
 
-(defn shipping
-  [{:keys [address]}]
-  (let [addresses        (re-frame/subscribe [:psonia.cart/addresses])
-        first-address-id (-> (keys @addresses)
-                             first)
-        selected-address (or address first-address-id)]
+(defn shipping-method
+  []
+  (let [sub-total       (re-frame/subscribe [:psonia.cart/sub-total])
+        shipping-method (re-frame/subscribe [:psonia.order.shipping/method])]
+    (js/console.log @shipping-method)
     [:<>
      [multi-level-navbar]
      [site/page-title "Checkout" [{:name "Home"
@@ -92,32 +95,67 @@
       [:div.row
        [:section.col-lg-8
         ;; Steps
-        [checkout-step-progress {:current-step :shipping}]
-        [:h2.h6.pb-3.mb-2
-         "Choose shipping address"]
-        [:div.table-responsive
-         [:table.table.table-hover.font-size-sm.border-bottom
-          [:thead
-           [:tr
-            [:th.align-middle]
-            [:th.align-middle "Address"]]]
-          [:tbody
-           (doall
-             (for [[adr-id adr] (map vector (keys @addresses) (vals @addresses))]
-               [:tr
-                [:td
-                 [:div.custom-control.custom-radio.mb-4
-                  [:input.custom-control-input
-                   {:type "radio"
-                    :id   (str adr-id)
-                    :name "shipping-address"}]
-                  [:label.custom-control-label
-                   {:for (str adr-id)}]]]
-                [:td
-                 (str (apply str (interpose ", " (vals adr))))]]))]]]]]]]))
+        [checkout-step-progress {:current-step :shipping-method}]
+        [forms/delivery-method
+         {:on-submit     #(re-frame/dispatch [:psonia.order/update-shipping-method %])
+          :initial-value @shipping-method}]]
+       [:aside.col-lg-4.pt-4.pt-lg-0
+        [:div.cz-sidebar-static.rounded-lg.box-shadow-lg.ml-lg-auto
+         [:div.text-center.mb-4.pb-3.border-bottom
+          [:h2.h6.mb-3.pb-1 "Subtotal"]
+          [:h3.h6.mb-3.pb-1
+           [money @sub-total]]]
+         [:button.btn.btn-primary.btn-shadow.btn-block.mt-4
+          {:disabled (not (boolean @shipping-method))
+           :on-click #(re-frame/dispatch [:psonia.routes/push-state :psonia.shipping.address/view])}
+          [:i.czi-card.font-size-lg.mr-2]
+          "Continue"]]]]]]))
+
+(defn shipping-address
+  []
+  (let [sub-total (re-frame/subscribe [:psonia.cart/sub-total])]
+    [:<>
+     [multi-level-navbar]
+     [site/page-title "Checkout" [{:name "Home"
+                                   :url  "/"
+                                   :icon :home}
+                                  {:name "Checkout"
+                                   :url  "#"}]]
+     [:div.container.pb-5.mb-2.mb-md-4
+      [:div.row
+       [:section.col-lg-8
+        ;; Steps
+        [checkout-step-progress {:current-step :shipping-address}]
+        [address-selector]]
+       [:aside.col-lg-4.pt-4.pt-lg-0
+        [:div.cz-sidebar-static.rounded-lg.box-shadow-lg.ml-lg-auto
+         [:div.text-center.mb-4.pb-3.border-bottom
+          [:h2.h6.mb-3.pb-1 "Subtotal"]
+          [:h3.h6.mb-3.pb-1
+           [money @sub-total]]]
+         [:a.btn.btn-primary.btn-shadow.btn-block.mt-4
+          {:href     (resolve-href :psonia.shipping.address/view {} {})
+           :disabled true}
+          [:i.czi-card.font-size-lg.mr-2]
+          "Continue"]]]]]]))
 
 (defn payment
-  [])
+  []
+  [:<>
+   [multi-level-navbar]
+   [site/page-title "Checkout" [{:name "Home"
+                                 :url  "/"
+                                 :icon :home}
+                                {:name "Checkout"
+                                 :url  "#"}]]
+   [:div.container.pb-5.mb-2.mb-md-4
+    [:div.row
+     [:section.col-lg-8
+      [checkout-step-progress {:current-step :payment-method}]
+      [:h2.h6.pb-3.mb-2
+       "Choose payment method"]
+      [:div
+       [forms/card]]]]]])
 
 (def routes
   [""
@@ -125,8 +163,13 @@
     {:name :psonia.cart/view
      :view #'view}]
    ["/shipping"
-    {:name :psonia.shipping/view
-     :view #'shipping}]
+    {:name :psonia.shipping.method/view
+     :view #'shipping-method}]
+   ["/shipping/address"
+    {:name :psonia.shipping.address/view
+     :view #'shipping-address}]
    ["/payment"
-    {:name :psonia.payment/view
+    {:name :psonia.payment.method/view}]
+   ["/payment/details"
+    {:name :psonia.payment.card-details/view
      :view #'payment}]])

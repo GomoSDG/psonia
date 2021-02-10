@@ -16,7 +16,7 @@
 (defn brand [body]
   [:<>
    [:a.navbar-brand.d-none.d-sm-block.mr-3.flex-shrink-0 {:style {:min-width "7rem"}
-                                                          :href "index.html"}
+                                                          :href "/"}
     body]
    [:a.navbar-brand.d-sm-none.mr-2.order-lg-1 {:style {:min-width "4.625rem"}
                                                :href "/"}

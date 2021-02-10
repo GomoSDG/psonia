@@ -1,4 +1,4 @@
-(ns psonia.entities.products
+(ns psonia.models.products
   (:require [cljs.spec.alpha :as s]))
 
 (s/def ::spec (s/keys :req-un [::price ::name ::id ::image-b64 ::category ::quantity]

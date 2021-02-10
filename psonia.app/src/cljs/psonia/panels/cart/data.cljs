@@ -33,10 +33,33 @@
   (fn [db [product]]
     (update db :psonia/cart dissoc (product :id) )))
 
+(reg-event-db
+  :psonia.cart/set-shipping-address
+  [re-frame/trim-v]
+  (fn [db [adr-id]]
+    (js/console.log "Updating!" adr-id)
+    (assoc db :psonia.cart/current-address adr-id)))
+
+(reg-event-db
+  :psonia.order/update-shipping-method
+  [re-frame/trim-v]
+  (fn [db [method]]
+    (assoc-in db [:psonia/order :psonia.order/shipping :psonia.shipping/method] method)))
+
+(reg-sub
+  :psonia.order.shipping/method
+  (fn [db]
+    (get-in db [:psonia/order :psonia.order/shipping :psonia.shipping/method])))
+
 (reg-sub
   :psonia.cart/addresses
   (fn [db]
     (get db :psonia.cart/addresses)))
+
+(reg-sub
+  :psonia.cart/current-address
+  (fn [db]
+    (db :psonia.cart/current-address)))
 
 (reg-sub
   :psonia.cart/item-count

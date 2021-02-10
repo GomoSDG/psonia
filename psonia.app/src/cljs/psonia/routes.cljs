@@ -7,6 +7,7 @@
             [psonia.panels.catalog.core :as catalog]
             [psonia.panels.cart.core :as cart]
             [psonia.panels.home :as home]
+            [psonia.panels.core :as panels]
             [psonia.panels.admin.routes :as admin]))
 
 (def routes [""
@@ -40,10 +41,12 @@
              ;; admin
              admin/routes])
 
-(defn router-component [{:keys [router]}]
+(defn router-component [_]
   (let [current-route @(re-frame/subscribe [:routes/current-route])
         view          (-> current-route :data :view)
-        params        (:parameters current-route)]
+        params        (:parameters current-route)
+        title         (panels/page-title view)]
+    (set! (.-title js/document) (str title " - Super Street"))
     [:div
      (when current-route
        [view (reduce merge (vals params))])]))
@@ -59,21 +62,23 @@
 
 (defn init-routes! []
   (rfe/start!
-   router
-   on-navigate
-   {:use-fragment false}))
+    router
+    on-navigate
+    {:use-fragment false}))
 
 ;; Events
 
-(re-frame/reg-event-fx :routes/push-state
-                       (fn [db [_ & route]]
-                         {:push-state route}))
+(re-frame/reg-event-db
+  :routes/navigated
+  (fn [db [_ new-match]]
+    (let [old-match   (:current-route db)
+          controllers (rfc/apply-controllers (:controllers old-match) new-match)]
+      (assoc db :current-route (assoc new-match :controllers controllers)))))
 
-(re-frame/reg-event-db :routes/navigated
-                       (fn [db [_ new-match]]
-                         (let [old-match   (:current-route db)
-                               controllers (rfc/apply-controllers (:controllers old-match) new-match)]
-                           (assoc db :current-route (assoc new-match :controllers controllers)))))
+(re-frame/reg-event-fx
+  :psonia.routes/push-state
+  (fn [_ [_ & route]]
+    {:push-state route}))
 
 ;; Subcsriptions
 

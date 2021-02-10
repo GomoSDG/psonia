@@ -1,16 +1,13 @@
 (ns psonia.panels.home
-  (:require [psonia.panels.components :refer [multi-level-navbar static-sidebar init-dropdown]]
-            [psonia.layouts.site :as site]
+  (:require [psonia.panels.components :refer [multi-level-navbar init-dropdown]]
             [re-frame.core :as re-frame]
-            [psonia.panels.catalog.components :refer [product-card product-carousel]]
-            [reagent.ratom :as ratom]
-            [psonia.panels.catalog.components :as catalog]))
+            [psonia.panels.catalog.components :refer [product-carousel] :as catalog]))
 
 (def breadcrumb [{:name "Home"
                   :url  "#"
                   :icon :home}])
 
-(defn panel [navbar]
+(defn ^{:page-title "Hello"} panel []
   (let [products (re-frame/subscribe [:products])]
     (fn []
       [:<>
@@ -31,12 +28,12 @@
               [:span.input-group-text
                [:i.czi-search]]]
              [:input.form-control.form-control-lg.prepended-form-control.rounded-right-0
-              {:type "text"
+              {:type        "text"
                :placeholder "Start your search"}]
              [:div.input-group-append
               [:button.btn.btn-primary.btn-lg.dropdown-toggle.font-size-base
                {:type "button"
-                :ref init-dropdown}
+                :ref  init-dropdown}
                "All Categories"]
               [:div.dropdown-menu.dropdown-menu-right
                [:a.dropdown-item

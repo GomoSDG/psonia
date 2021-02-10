@@ -1,4 +1,4 @@
-(ns psonia.entities.vendors
+(ns psonia.models.vendors
   (:require [cljs.spec.alpha :as s]))
 
 (s/def ::spec (s/keys :req-un [::name ::address ::status ::active? ::created-on ::contact-details ::fica-documents]))
