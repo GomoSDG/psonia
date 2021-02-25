@@ -1,15 +1,26 @@
 (ns psonia.panels.home
   (:require [psonia.panels.components :refer [multi-level-navbar init-dropdown]]
+            [reagent.core :as r]
             [re-frame.core :as re-frame]
+            [psonia.urls :refer [resolve-href]]
+            ["jquery" :as $]
             [psonia.panels.catalog.components :refer [product-carousel] :as catalog]))
 
 (def breadcrumb [{:name "Home"
                   :url  "#"
                   :icon :home}])
 
-(defn ^{:page-title "Home"} panel []
-  (let [products (re-frame/subscribe [:products])]
+(defn toggle-menu
+  [_]
+  (-> ($ (.-target _))
+      (.parent)
+      (.toggleClass "show")))
+
+(defn ^{:page-title "Home"} panel [{:keys [search category]}]
+  (let [products      (re-frame/subscribe [:products])
+        search-phrase (r/atom search)]
     (fn []
+      (js/console.log "Phrase" @search-phrase)
       [:<>
        [multi-level-navbar]
        [:section.bg-accent.bg-position-center-top.bg-no-repeat.py-5
@@ -29,7 +40,16 @@
                [:i.czi-search]]]
              [:input.form-control.form-control-lg.prepended-form-control.rounded-right-0
               {:type        "text"
-               :placeholder "Start your search"}]
+               :placeholder "Start your search"
+               :value       @search-phrase
+               :on-change   #(reset! search-phrase (-> (.-target %)
+                                                       (.-value)))
+               :on-key-up   #(when (= "Enter" (.-key %))
+                               (re-frame/dispatch [:psonia.routes/push-state
+                                                   :psonia.catalog/products
+                                                   {}
+                                                   {:search   @search-phrase
+                                                    :category category}]))}]
              [:div.input-group-append
               [:button.btn.btn-primary.btn-lg.dropdown-toggle.font-size-base
                {:type "button"
@@ -37,13 +57,19 @@
                "All Categories"]
               [:div.dropdown-menu.dropdown-menu-right
                [:a.dropdown-item
-                {:href "#"}
+                {:href     (resolve-href :psonia/home {} {:search   @search-phrase
+                                                          :category :all})
+                 :on-click toggle-menu}
                 "All Categories"]
                [:a.dropdown-item
-                {:href "#"}
+                {:href     (resolve-href :psonia/home {} {:search   @search-phrase
+                                                          :category :products})
+                 :on-click toggle-menu}
                 "Products"]
                [:a.dropdown-item
-                {:href "#"}
+                {:href     (resolve-href :psonia/home {} {:search   @search-phrase
+                                                          :category :services})
+                 :on-click toggle-menu}
                 "Services"]]]]]]]]]
 
        [:section.container.position-relative.pt-3.pt-lg-0.pb-5.mt-lg-n10
@@ -103,6 +129,4 @@
                "View products"]]]]]
           ;; Vendor products/services
           [:div.col-lg-8
-           [product-carousel (take 3 @products)]]]]]
-
-       ])))
+           [product-carousel (take 3 @products)]]]]]])))

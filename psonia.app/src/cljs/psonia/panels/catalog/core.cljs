@@ -51,8 +51,8 @@
 (def routes
   ["/products"
    [""
-    {:name :app/products
+    {:name :psonia.catalog/products
      :view #'list-all}]
    ["/:id"
-    {:name :app.products/view
+    {:name :psonia.catalog.products/view
      :view #'view-product}]])

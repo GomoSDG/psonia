@@ -67,7 +67,7 @@
          [:div#navbarCollapse.collapse.navbar-collapse[:ul.navbar-nav
                                                        [:li.nav-item
                                                         [:a.nav-link
-                                                         {:href (resolve-href :app/home {:id 1} {})}
+                                                         {:href (resolve-href :psonia/home {} {})}
                                                          "Home"]]
                                                        [:li.nav-item
                                                         [:a.nav-link
@@ -140,39 +140,37 @@
    :display-name name})
 
 (defn tablist
-  ([options tablist]
-   (let [cnt (ratom/atom 0)
-         tabs (clojure.set/index tablist [:id])
-         current-tab (ratom/atom (:id (first tablist)))]
+  ([_ tablist]
+   (let [current-tab (ratom/atom (:id (first tablist)))]
      (fn []
        [:<>
         [:ul.nav.nav-tabs.nav-justified {:role "tablist"}
          (doall
-          (for [{:keys [display-name id]} tablist]
-            ^{:key id} [:li.nav-item
-                        [:a.nav-link.px-0  {:href (str "#" id)
-                                            :class (if (= @current-tab id) ["active"])
-                                            :on-click #(reset! current-tab id)}
-                         [:div.d-none.d-lg-block {:data-toggle "tab"
-                                                  :role "tab"}
-                          display-name]
-                         [:div.d-lg-none.text-center {:data-toggle "tab"
-                                                      :role "tab"}
-                          display-name]]]))]
+           (for [{:keys [display-name id]} tablist]
+             ^{:key id} [:li.nav-item
+                         [:a.nav-link.px-0  {:href     (str "#" id)
+                                             :class    (when (= @current-tab id) ["active"])
+                                             :on-click #(reset! current-tab id)}
+                          [:div.d-none.d-lg-block {:data-toggle "tab"
+                                                   :role        "tab"}
+                           display-name]
+                          [:div.d-lg-none.text-center {:data-toggle "tab"
+                                                       :role        "tab"}
+                           display-name]]]))]
         [:div.tab-content
          (doall
-          (for [{:keys [id body]} tablist]
-            ^{:key (str id "body")} [:div.tab-pane.fade {:id id
-                                                         :role "tabpanel"
-                                                         :class (if (= @current-tab id) ["show" "active"])}
-                                     [body]]))]])))
+           (for [{:keys [id body]} tablist]
+             ^{:key (str id "body")} [:div.tab-pane.fade {:id    id
+                                                          :role  "tabpanel"
+                                                          :class (when (= @current-tab id) ["show" "active"])}
+                                      [body]]))]])))
   ([t]
    (tablist nil t)))
 
 ;; File Uploader Component
 
 (defn file-drop-handler [reader]
-  (defn handle-file-drop [ev]
+  (fn handle-file-drop [ev]
     (let [files (.-items (.-dataTransfer ev))]
       ;; prevent default behavior
       (.preventDefault ev)
@@ -206,8 +204,8 @@
       (-> (.siblings el)
           (.toggleClass "show"))
 
-      (if (not (-> (.next el)
-                   (.hasClass "show")))
+      (when (not (-> (.next el)
+                     (.hasClass "show")))
         (-> (.parents el ".dropdown-menu")
             (.first)
             (.find "show")

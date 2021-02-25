@@ -6,24 +6,20 @@
             [reitit.coercion.spec :as rss]
             [psonia.panels.catalog.core :as catalog]
             [psonia.panels.cart.core :as cart]
+            [psonia.panels.users.core :as users]
             [psonia.panels.home :as home]
             [psonia.panels.core :as panels]
             [psonia.panels.admin.routes :as admin]))
 
 (def routes [""
              ["/"
-              {:name :app/home
+              {:name :psonia/home
                :view #'home/panel}]
              ;; products
              catalog/routes
 
              ;; users
-             ["/users"
-              ["/login"
-               {:name :app.users/login}]
-              ["/register"
-               {:name :app.users/onboarding}]
-              ["/profile"]]
+             users/routes
 
              ;; cart
              cart/routes

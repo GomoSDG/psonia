@@ -37,18 +37,25 @@
               "Continue shopping"]]
 
             ;; Products
+            (when-not (seq product-items)
+              [:div.text-center.py-5.border
+               [:p "You have no items in your shopping cart."]
+               [:a.btn.btn-outline-primary.btn-sm.pl-2.mt-4
+                {:href "/products"}
+                "Continue shopping"]])
+
             (doall
               (for [[i p] product-items]
                 ^{:key p}
                 [:div.d-sm-flex.justify-content-between.align-items-center.my-4.pb-3.border-bottom
                  [:div.media.media-ie-fix.d-block.d-sm-flex.align-items-center.text-center.text-sm-left
                   [:a.d-inline-block.mx-auto.mr-sm-4
-                   {:href  (resolve-href :app.products/view {:id (:id p)} {})
+                   {:href  (resolve-href :psonia.catalog.products/view {:id (:id p)} {})
                     :style {:width "10rem"}}
                    [:img {:src "https://via.placeholder.com/240x240"}]]
                   [:div.media-body.pt-2
                    [:h3.product-title.font-size-base.mb-2
-                    [:a {:href (resolve-href :app.products/view {:id (:id p)} {})}
+                    [:a {:href (resolve-href :psonia.catalog.products/view {:id (:id p)} {})}
                      (:name p)]]
                    [:div.font-size-sm
                     [:span.text-muted.mr-2
@@ -74,8 +81,9 @@
               [:h2.h6.mb-3.pb-1 "Subtotal"]
               [:h3.h6.mb-3.pb-1
                [money @sub-total]]]
-             [:a.btn.btn-primary.btn-shadow.btn-block.mt-4
-              {:href (resolve-href :psonia.shipping.method/view {} {})}
+             [:button.btn.btn-primary.btn-shadow.btn-block.mt-4
+              {:on-click #(re-frame/dispatch [:psonia.routes/push-state :psonia.shipping.method/view])
+               :disabled (not (seq product-items))}
               [:i.czi-card.font-size-lg.mr-2]
               "Proceed to Checkout"]]]]]]))))
 
@@ -83,7 +91,6 @@
   []
   (let [sub-total       (re-frame/subscribe [:psonia.cart/sub-total])
         shipping-method (re-frame/subscribe [:psonia.order.shipping/method])]
-    (js/console.log @shipping-method)
     [:<>
      [multi-level-navbar]
      [site/page-title "Checkout" [{:name "Home"

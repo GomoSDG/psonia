@@ -82,7 +82,7 @@
       [:i.czi-heart]]
      [:div.product-card-actions
       [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2
-       {:href (resolve-href :app.products/view {:id (:id product)} {})}
+       {:href (resolve-href :psonia.catalog.products/view {:id (:id product)} {})}
        [:i.czi-eye]]
       [:a.btn.btn-light.btn-icon.btn-shadow.font-size-base.mx-2
        {:on-click #(re-frame/dispatch [:psonia.cart/add-to-cart 1 product])}
@@ -101,7 +101,7 @@
       [:div.star-rating
        [rating (:avg-rating product)]]]
      [:h3.product-title.font-size-sm.mb-2
-      [:a {:href (resolve-href :app.products/view {:id (:id product)} {})}
+      [:a {:href (resolve-href :psonia.catalog.products/view {:id (:id product)} {})}
        (:name product)]]
      [:div.d-flex.flex-wrap.justify-content-between.align-items-center
       [:div.font-size-sm.mr-2
@@ -122,7 +122,7 @@
       (when on-promotion
         [:span.badge.badge-danger.badge-shadow "Sale"])
       [:a.card-img-top.d-block.overflow-hidden
-       {:href (resolve-href :app.products/view {:id (product :id)} {})}
+       {:href (resolve-href :psonia.catalog.products/view {:id (product :id)} {})}
        [:img {:alt "Product", :src "https://via.placeholder.com/500"}]]
       [product-info product]
       [actions product]

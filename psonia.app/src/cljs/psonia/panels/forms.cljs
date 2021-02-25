@@ -1,4 +1,5 @@
-(ns psonia.panels.forms)
+(ns psonia.panels.forms
+  (:require [fork.re-frame :as fork]))
 
 (defn make-error-renderer
   [touched errors]
